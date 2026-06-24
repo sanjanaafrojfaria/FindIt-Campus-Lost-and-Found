@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FindIt - Campus Lost & Found Platform</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<link rel="stylesheet"
+href="assets/css/style.css">
+
+</head>
+
+<body>
+
+<?php include('includes/navbar.php'); ?>
+
+<!-- HERO -->
+
+<section class="hero">
+
+    <div class="container">
+
+        <div class="hero-content">
+
+            <div class="badge bg-primary mb-3 fs-6">
+                🔒 Verified Campus Members Only
+            </div>
+
+            <h1>
+                Find Lost Items Faster on Campus
+            </h1>
+
+            <p class="my-4">
+                A secure platform for students and staff
+                to report, discover and recover lost
+                belongings through verified accounts
+                and smart matching.
+            </p>
+
+            <a href="register.php"
+               class="btn btn-primary btn-lg me-2">
+                Get Started
+            </a>
+
+            <a href="login.php"
+               class="btn btn-outline-light btn-lg">
+                Login
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- STATS -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<div class="row text-center g-4">
+
+<div class="col-md-3">
+
+<div class="card stat-card shadow-sm">
+
+<div class="card-body">
+
+<h2 class="text-primary fw-bold">
+125+
+</h2>
+
+<p>Verified Users</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card stat-card shadow-sm">
+
+<div class="card-body">
+
+<h2 class="text-primary fw-bold">
+48+
+</h2>
+
+<p>Lost Items</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card stat-card shadow-sm">
+
+<div class="card-body">
+
+<h2 class="text-primary fw-bold">
+31+
+</h2>
+
+<p>Found Items</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card stat-card shadow-sm">
+
+<div class="card-body">
+
+<h2 class="text-primary fw-bold">
+22+
+</h2>
+
+<p>Successful Returns</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FEATURES -->
+
+<section class="py-5">
+
+<div class="container">
+
+<div class="text-center mb-5">
+
+<h2 class="fw-bold">
+Key Features
+</h2>
+
+<p class="text-muted">
+Making item recovery easier and safer.
+</p>
+
+</div>
+
+<div class="row g-4">
+
+<div class="col-md-4">
+
+<div class="card feature-card shadow-sm h-100">
+
+<div class="card-body text-center">
+
+<i class="fa-solid fa-user-shield fa-3x text-primary mb-3"></i>
+
+<h5>
+Verified Users
+</h5>
+
+<p>
+Only approved university members can use the platform.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="card feature-card shadow-sm h-100">
+
+<div class="card-body text-center">
+
+<i class="fa-solid fa-link fa-3x text-primary mb-3"></i>
+
+<h5>
+Smart Matching
+</h5>
+
+<p>
+Suggests potential matches between lost and found items.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="card feature-card shadow-sm h-100">
+
+<div class="card-body text-center">
+
+<i class="fa-solid fa-qrcode fa-3x text-primary mb-3"></i>
+
+<h5>
+QR Support
+</h5>
+
+<p>
+Generate QR codes for easier item recovery.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- HOW IT WORKS -->
+
+<section class="bg-light py-5">
+
+<div class="container">
+
+<h2 class="text-center fw-bold mb-5">
+How FindIt Works
+</h2>
+
+<div class="row text-center">
+
+<div class="col-md-3">
+
+<div class="step-card">
+
+<div class="step-icon">
+1️⃣
+</div>
+
+<h5>
+Report Item
+</h5>
+
+<p>
+Create a lost or found item post.
+</p>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="step-card">
+
+<div class="step-icon">
+2️⃣
+</div>
+
+<h5>
+Search
+</h5>
+
+<p>
+Browse matching posts.
+</p>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="step-card">
+
+<div class="step-icon">
+3️⃣
+</div>
+
+<h5>
+Claim
+</h5>
+
+<p>
+Submit ownership proof.
+</p>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="step-card">
+
+<div class="step-icon">
+4️⃣
+</div>
+
+<h5>
+Recover
+</h5>
+
+<p>
+Receive your item safely.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- CTA -->
+
+<section class="cta-section py-5 text-center">
+
+<div class="container">
+
+<h2 class="fw-bold">
+Ready to Recover Lost Items?
+</h2>
+
+<p class="mb-4">
+Join the FindIt community today.
+</p>
+
+<a href="register.php"
+class="btn btn-light btn-lg">
+Register Now
+</a>
+
+</div>
+
+</section>
+
+<?php include('includes/footer.php'); ?>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

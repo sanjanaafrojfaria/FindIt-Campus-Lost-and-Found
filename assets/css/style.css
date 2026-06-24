@@ -1,0 +1,99 @@
+body{
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* HERO */
+
+.hero{
+    padding: 100px 0;
+
+    background:
+    linear-gradient(
+        to right,
+        rgba(0,0,0,0.75) 0%,
+        rgba(0,0,0,0.55) 35%,
+        rgba(0,0,0,0.15) 60%,
+        rgba(0,0,0,0) 100%
+    ),
+    url('../images/CampusImage.png');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    color:white;
+}
+
+.hero-content{
+    max-width:650px;
+}
+
+.hero h1{
+    font-size:4rem;
+    font-weight:700;
+}
+
+.hero p{
+    font-size:1.2rem;
+}
+
+.hero h1{
+    font-size:4rem;
+    font-weight:700;
+}
+
+.hero p{
+    font-size:1.2rem;
+}
+
+.btn-custom{
+    padding:12px 28px;
+    font-weight:600;
+}
+
+/* FEATURE CARDS */
+
+.feature-card{
+    transition:all .3s ease;
+    border:none;
+}
+
+.feature-card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 15px 30px rgba(0,0,0,.15);
+}
+
+/* STATS */
+
+.stat-card{
+    border:none;
+    transition:.3s;
+}
+
+.stat-card:hover{
+    transform:translateY(-5px);
+}
+
+/* HOW IT WORKS */
+
+.step-card{
+    padding:20px;
+}
+
+.step-icon{
+    font-size:3rem;
+}
+
+/* CTA */
+
+.cta-section{
+    background:#2563eb;
+    color:white;
+}
+
+/* FOOTER */
+
+.footer-section{
+    background:#111827;
+    color:white;
+}
