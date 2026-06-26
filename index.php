@@ -15,7 +15,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
 <link rel="stylesheet"
 href="assets/css/style.css">
-
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 
 <body>
@@ -28,32 +29,94 @@ href="assets/css/style.css">
 
     <div class="container">
 
-        <div class="hero-content">
+        <div class="row align-items-center">
 
-            <div class="badge bg-primary mb-3 fs-6">
-                🔒 Verified Campus Members Only
+            <div class="col-lg-7 hero-content">
+
+                <div class="hero-badge">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    Verified Campus Members Only
+
+                </div>
+
+                <h1>
+
+                    Lost Something
+                    <br>
+
+                    <span>on Campus?</span>
+
+                </h1>
+
+                <p>
+
+                    FindIt is a secure platform exclusively for
+                    university students and staff to report,
+                    search, and recover lost belongings quickly
+                    through verified accounts and smart matching.
+
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="register.php"
+                       class="btn btn-hero">
+
+                        Get Started
+
+                    </a>
+
+                    <a href="login.php"
+                       class="btn btn-outline-hero">
+
+                        Login
+
+                    </a>
+
+                </div>
+
             </div>
 
-            <h1>
-                Find Lost Items Faster on Campus
-            </h1>
+        </div>
 
-            <p class="my-4">
-                A secure platform for students and staff
-                to report, discover and recover lost
-                belongings through verified accounts
-                and smart matching.
+    </div>
+
+    <div class="scroll-indicator">
+
+        <span>Scroll</span>
+
+        <i class="fa-solid fa-chevron-down"></i>
+
+    </div>
+
+</section>
+<!-- LOST SOMETHING SECTION -->
+
+<section class="lost-section">
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <h2 class="lost-title">
+
+                Lost Something?
+
+            </h2>
+
+            <p>
+
+                Browse the latest reported items from your campus.
+
             </p>
 
-            <a href="register.php"
-               class="btn btn-primary btn-lg me-2">
-                Get Started
-            </a>
+            <h3 class="find-here">
 
-            <a href="login.php"
-               class="btn btn-outline-light btn-lg">
-                Login
-            </a>
+                Find Here!
+
+            </h3>
 
         </div>
 
@@ -61,6 +124,152 @@ href="assets/css/style.css">
 
 </section>
 
+
+<!-- MOVING ITEMS -->
+
+<section class="recent-items">
+
+    <div class="slider">
+
+        <div class="slide-track">
+
+            <!-- CARD 1 -->
+
+            <div class="item-card lost">
+
+                <span class="status lost-status">
+
+                    LOST
+
+                </span>
+
+                <h4>Black Backpack</h4>
+
+                <p>Engineering Building</p>
+
+                <small>2 hours ago</small>
+
+            </div>
+
+            <!-- CARD 2 -->
+
+            <div class="item-card found">
+
+                <span class="status found-status">
+
+                    FOUND
+
+                </span>
+
+                <h4>Student ID</h4>
+
+                <p>Central Library</p>
+
+                <small>30 mins ago</small>
+
+            </div>
+
+            <!-- CARD 3 -->
+
+            <div class="item-card lost">
+
+                <span class="status lost-status">
+
+                    LOST
+
+                </span>
+
+                <h4>Scientific Calculator</h4>
+
+                <p>Room 402</p>
+
+                <small>Yesterday</small>
+
+            </div>
+
+            <!-- CARD 4 -->
+
+            <div class="item-card found">
+
+                <span class="status found-status">
+
+                    FOUND
+
+                </span>
+
+                <h4>Blue Water Bottle</h4>
+
+                <p>Cafeteria</p>
+
+                <small>1 hour ago</small>
+
+            </div>
+
+            <!-- DUPLICATES FOR LOOP -->
+
+            <div class="item-card lost">
+
+                <span class="status lost-status">
+
+                    LOST
+
+                </span>
+
+                <h4>Black Backpack</h4>
+
+                <p>Engineering Building</p>
+
+                <small>2 hours ago</small>
+
+            </div>
+
+            <div class="item-card found">
+
+                <span class="status found-status">
+
+                    FOUND</span>
+
+                <h4>Student ID</h4>
+
+                <p>Central Library</p>
+
+                <small>30 mins ago</small>
+
+            </div>
+
+            <div class="item-card lost">
+
+                <span class="status lost-status">
+
+                    LOST</span>
+
+                <h4>Calculator</h4>
+
+                <p>Room 402</p>
+
+                <small>Yesterday</small>
+
+            </div>
+
+            <div class="item-card found">
+
+                <span class="status found-status">
+
+                    FOUND</span>
+
+                <h4>Water Bottle</h4>
+
+                <p>Cafeteria</p>
+
+                <small>1 hour ago</small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
 <!-- STATS -->
 
 <section class="py-5 bg-light">
@@ -363,6 +572,6 @@ Register Now
 <?php include('includes/footer.php'); ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="assets/js/script.js"></script>
 </body>
 </html>
