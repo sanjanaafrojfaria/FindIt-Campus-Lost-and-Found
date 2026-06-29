@@ -100,23 +100,44 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
         <div class="section-title">
 
-            <h2 class="lost-title">
-
+            <h2 class="main-title">
                 Lost Something?
-
             </h2>
 
-            <p>
+            <div class="or-text">
+                or
+            </div>
 
-                Browse the latest reported items from your campus.
+            <h2 class="main-title found-title">
+                Found Something?
+            </h2>
+
+            <p class="section-description">
+
+                Every report brings an item one step closer to its owner.
+                Report what you've lost or help someone by reporting what you've found.
 
             </p>
 
-            <h3 class="find-here">
+            <div class="action-buttons">
 
-                Find Here!
+                <a href="#" class="btn-lost">
 
-            </h3>
+                    <i class="fa-solid fa-circle-exclamation"></i>
+
+                    Report Lost Item
+
+                </a>
+
+                <a href="#" class="btn-found">
+
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+
+                    Report Found Item
+
+                </a>
+
+            </div>
 
         </div>
 
@@ -127,15 +148,27 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <!-- MOVING ITEMS -->
 
+<!-- LATEST LOST ITEMS -->
+
 <section class="recent-items">
+
+    <div class="container">
+
+        <h3 class="carousel-title">
+
+            🔴 Latest Lost Items
+
+        </h3>
+
+    </div>
 
     <div class="slider">
 
         <div class="slide-track">
 
-            <!-- CARD 1 -->
+            <!-- Lost Card -->
 
-            <div class="item-card lost">
+            <div class="item-card">
 
                 <span class="status lost-status">
 
@@ -143,17 +176,114 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
                 </span>
 
-                <h4>Black Backpack</h4>
+                <h4>🎒 Black Backpack</h4>
 
-                <p>Engineering Building</p>
+                <p><i class="fa-solid fa-location-dot"></i> Engineering Building</p>
 
-                <small>2 hours ago</small>
+                <small>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    2 hours ago
+
+                </small>
 
             </div>
 
-            <!-- CARD 2 -->
+            <div class="item-card">
 
-            <div class="item-card found">
+                <span class="status lost-status">
+
+                    LOST
+
+                </span>
+
+                <h4>📱 Samsung Phone</h4>
+
+                <p><i class="fa-solid fa-location-dot"></i> Library</p>
+
+                <small>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    Today
+
+                </small>
+
+            </div>
+
+            <div class="item-card">
+
+                <span class="status lost-status">
+
+                    LOST
+
+                </span>
+
+                <h4>🪪 Student ID</h4>
+
+                <p><i class="fa-solid fa-location-dot"></i> CSE Building</p>
+
+                <small>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    Yesterday
+
+                </small>
+
+            </div>
+
+            <!-- Duplicate -->
+
+            <div class="item-card">
+
+                <span class="status lost-status">
+
+                    LOST
+
+                </span>
+
+                <h4>🎒 Black Backpack</h4>
+
+                <p><i class="fa-solid fa-location-dot"></i> Engineering Building</p>
+
+                <small>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    2 hours ago
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- LATEST FOUND ITEMS -->
+
+<section class="recent-items">
+
+    <div class="container">
+
+        <h3 class="carousel-title found">
+
+            🟢 Latest Found Items
+
+        </h3>
+
+    </div>
+
+    <div class="slider reverse">
+
+        <div class="slide-track reverse-track">
+
+            <div class="item-card">
 
                 <span class="status found-status">
 
@@ -161,35 +291,21 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
                 </span>
 
-                <h4>Student ID</h4>
+                <h4>⌚ Smart Watch</h4>
 
-                <p>Central Library</p>
+                <p><i class="fa-solid fa-location-dot"></i> Cafeteria</p>
 
-                <small>30 mins ago</small>
+                <small>
 
-            </div>
+                    <i class="fa-regular fa-clock"></i>
 
-            <!-- CARD 3 -->
+                    30 mins ago
 
-            <div class="item-card lost">
-
-                <span class="status lost-status">
-
-                    LOST
-
-                </span>
-
-                <h4>Scientific Calculator</h4>
-
-                <p>Room 402</p>
-
-                <small>Yesterday</small>
+                </small>
 
             </div>
 
-            <!-- CARD 4 -->
-
-            <div class="item-card found">
+            <div class="item-card">
 
                 <span class="status found-status">
 
@@ -197,71 +313,61 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
                 </span>
 
-                <h4>Blue Water Bottle</h4>
+                <h4>🔑 Keys</h4>
 
-                <p>Cafeteria</p>
+                <p><i class="fa-solid fa-location-dot"></i> Main Gate</p>
 
-                <small>1 hour ago</small>
+                <small>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    Today
+
+                </small>
 
             </div>
 
-            <!-- DUPLICATES FOR LOOP -->
+            <div class="item-card">
 
-            <div class="item-card lost">
+                <span class="status found-status">
 
-                <span class="status lost-status">
-
-                    LOST
+                    FOUND
 
                 </span>
 
-                <h4>Black Backpack</h4>
+                <h4>💧 Water Bottle</h4>
 
-                <p>Engineering Building</p>
+                <p><i class="fa-solid fa-location-dot"></i> Auditorium</p>
 
-                <small>2 hours ago</small>
+                <small>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    Yesterday
+
+                </small>
 
             </div>
 
-            <div class="item-card found">
+            <div class="item-card">
 
                 <span class="status found-status">
 
-                    FOUND</span>
+                    FOUND
 
-                <h4>Student ID</h4>
+                </span>
 
-                <p>Central Library</p>
+                <h4>⌚ Smart Watch</h4>
 
-                <small>30 mins ago</small>
+                <p><i class="fa-solid fa-location-dot"></i> Cafeteria</p>
 
-            </div>
+                <small>
 
-            <div class="item-card lost">
+                    <i class="fa-regular fa-clock"></i>
 
-                <span class="status lost-status">
+                    30 mins ago
 
-                    LOST</span>
-
-                <h4>Calculator</h4>
-
-                <p>Room 402</p>
-
-                <small>Yesterday</small>
-
-            </div>
-
-            <div class="item-card found">
-
-                <span class="status found-status">
-
-                    FOUND</span>
-
-                <h4>Water Bottle</h4>
-
-                <p>Cafeteria</p>
-
-                <small>1 hour ago</small>
+                </small>
 
             </div>
 
