@@ -30,15 +30,15 @@
             <ul class="navbar-nav ms-auto align-items-lg-center">
 
                 <li class="nav-item">
-                    <a class="nav-link active" href="#">Home</a>
+                    <a class="nav-link active" href="index.php#home">Home</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">How It Works</a>
+                    <a class="nav-link" href="index.php#how-it-works">How It Works</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Features</a>
+                    <a class="nav-link" href="index.php#features">Features</a>
                 </li>
 
                 <li class="nav-item ms-lg-3">

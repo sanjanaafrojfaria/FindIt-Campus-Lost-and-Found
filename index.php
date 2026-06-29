@@ -25,7 +25,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <!-- HERO -->
 
-<section class="hero">
+<section class="hero" id="home">
 
     <div class="container">
 
@@ -464,7 +464,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <!-- FEATURES -->
 
-<section class="py-5">
+<section class="py-5" id="features">
 
 <div class="container">
 
@@ -556,7 +556,7 @@ Generate QR codes for easier item recovery.
 
 <!-- HOW IT WORKS -->
 
-<section class="bg-light py-5">
+<section class="bg-light py-5" id="how-it-works">
 
 <div class="container">
 
