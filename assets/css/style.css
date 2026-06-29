@@ -669,19 +669,19 @@ font-size:28px;
 
 .btn-lost{
 
-    background:#ef4444;
+    background:#d52041;
 
 }
 
 .btn-found{
 
-    background:#10b981;
+    background:#137ac3;
 
 }
 
 .btn-lost:hover{
 
-    background:#dc2626;
+    background:#b11313;
 
     color:white;
 
@@ -693,7 +693,7 @@ font-size:28px;
 
 .btn-found:hover{
 
-    background:#059669;
+    background:#0c97bd;
 
     color:white;
 
@@ -722,4 +722,49 @@ font-size:28px;
 
     animation-direction:reverse;
 
+}
+/* =========================
+   LOGO FIX
+=========================*/
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: white;
+}
+
+.logo-icon {
+    font-size: 28px;
+    color: #22d3ee;
+}
+
+.logo-text h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+}
+
+.logo-text h3 span {
+    color: #22d3ee;
+}
+
+.logo-text small {
+    display: block;
+    font-size: 12px;
+    color: #cbd5e1;
+    margin-top: 2px;
+}
+.logo-icon i {
+    color: #22d3ee;
+    text-shadow: 0 0 8px #22d3ee, 0 0 16px #22d3ee;
+    transition: 0.3s;
+}
+
+.logo-icon i:hover {
+    text-shadow: 0 0 12px #22d3ee, 0 0 25px #22d3ee;
+    transform: scale(1.1);
 }
