@@ -76,3 +76,13 @@ if ($user['approval_status'] == "Rejected") {
     exit();
 
 }
+/* ===========================
+   CREATE SESSION
+=========================== */
+
+$_SESSION['user_id'] = $user['id'];
+$_SESSION['full_name'] = $user['full_name'];
+$_SESSION['email'] = $user['email'];
+$_SESSION['role'] = $user['role'];
+header("Location: student/dashboard.php");
+exit();
