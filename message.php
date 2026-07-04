@@ -76,6 +76,36 @@ switch ($action) {
     $buttonLink = "register.php";
 
     break;
+    case "login_failed":
+
+    $icon = "fa-circle-xmark";
+    $color = "#ef4444";
+    $title = "Login Failed";
+    $message = "Incorrect email or password.";
+    $buttonText = "Try Again";
+    $buttonLink = "login.php";
+
+    break;
+    case "pending_approval":
+
+    $icon = "fa-hourglass-half";
+    $color = "#f59e0b";
+    $title = "Account Pending";
+    $message = "Your account is waiting for administrator approval. Please try again later.";
+    $buttonText = "Back to Home";
+    $buttonLink = "index.php";
+
+    break;
+    case "account_rejected":
+
+    $icon = "fa-ban";
+    $color = "#ef4444";
+    $title = "Account Rejected";
+    $message = "Your registration has been rejected. Please contact the administrator if you believe this is a mistake.";
+    $buttonText = "Back to Home";
+    $buttonLink = "index.php";
+
+    break;
 
 }
 ?>
