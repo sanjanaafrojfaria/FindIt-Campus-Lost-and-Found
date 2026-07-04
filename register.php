@@ -38,6 +38,9 @@ include 'config/database.php';
             Join FindIt and help reconnect lost belongings with their rightful owners.
 
         </p>
+        <form action="register_process.php"
+      method="POST"
+      enctype="multipart/form-data">
 
         <div class="row">
 
@@ -154,6 +157,7 @@ include 'config/database.php';
             <a href="login.php">Sign In</a>
 
         </div>
+        </form>
 
     </div>
 

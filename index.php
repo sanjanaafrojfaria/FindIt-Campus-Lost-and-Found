@@ -257,6 +257,49 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
                 </small>
 
             </div>
+            <div class="item-card">
+
+                <span class="status lost-status">
+
+                    LOST
+
+                </span>
+
+                <h4>📱 Samsung Phone</h4>
+
+                <p><i class="fa-solid fa-location-dot"></i> Library</p>
+
+                <small>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    Today
+
+                </small>
+
+            </div>
+
+            <div class="item-card">
+
+                <span class="status lost-status">
+
+                    LOST
+
+                </span>
+
+                <h4>🪪 Student ID</h4>
+
+                <p><i class="fa-solid fa-location-dot"></i> CSE Building</p>
+
+                <small>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    Yesterday
+
+                </small>
+
+            </div>
 
         </div>
 

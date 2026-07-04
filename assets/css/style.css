@@ -451,9 +451,9 @@ SLIDER
 
     display:flex;
 
-    width:calc(320px * 8);
+     width:max-content;
 
-    animation:scrollItems 28s linear infinite;
+    animation:scrollItems 30s linear infinite;
 
 }
 
@@ -462,7 +462,45 @@ SLIDER
     animation-play-state:paused;
 
 }
+.slider{
 
+    position:relative;
+
+    overflow:hidden;
+
+}
+.slider::before,
+.slider::after{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    width:120px;
+
+    height:100%;
+
+    z-index:10;
+
+    pointer-events:none;
+
+}
+.slider::before{
+
+    left:0;
+
+    background:linear-gradient(to right,#f8fafc,transparent);
+
+}
+.slider::after{
+
+    right:0;
+
+    background:linear-gradient(to left,#f8fafc,transparent);
+
+}
 /*=========================
 CARDS
 =========================*/
