@@ -57,6 +57,54 @@ if ($password !== $confirm_password) {
 
 }
 /* ===========================
+   CHECK DUPLICATE EMAIL
+=========================== */
+
+$sql = "SELECT id FROM users WHERE email = ?";
+
+$stmt = mysqli_prepare($conn, $sql);
+
+mysqli_stmt_bind_param($stmt, "s", $email);
+
+mysqli_stmt_execute($stmt);
+
+mysqli_stmt_store_result($stmt);
+
+if (mysqli_stmt_num_rows($stmt) > 0) {
+
+    mysqli_stmt_close($stmt);
+
+    header("Location: message.php?action=email_exists");
+    exit();
+
+}
+
+mysqli_stmt_close($stmt);
+/* ===========================
+   CHECK DUPLICATE UNIVERSITY ID
+=========================== */
+
+$sql = "SELECT id FROM users WHERE university_id = ?";
+
+$stmt = mysqli_prepare($conn, $sql);
+
+mysqli_stmt_bind_param($stmt, "s", $university_id);
+
+mysqli_stmt_execute($stmt);
+
+mysqli_stmt_store_result($stmt);
+
+if (mysqli_stmt_num_rows($stmt) > 0) {
+
+    mysqli_stmt_close($stmt);
+
+    header("Location: message.php?action=id_exists");
+    exit();
+
+}
+
+mysqli_stmt_close($stmt);
+/* ===========================
    HASH PASSWORD
 =========================== */
 

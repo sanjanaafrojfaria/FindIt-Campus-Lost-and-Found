@@ -56,6 +56,26 @@ switch ($action) {
         $buttonLink = "register.php";
 
     break;
+    case "email_exists":
+
+    $icon = "fa-envelope-circle-xmark";
+    $color = "#ef4444";
+    $title = "Email Already Registered";
+    $message = "An account with this email already exists. Please sign in or use a different email address.";
+    $buttonText = "Back to Registration";
+    $buttonLink = "register.php";
+
+    break;
+    case "id_exists":
+
+    $icon = "fa-id-card";
+    $color = "#ef4444";
+    $title = "University ID Already Registered";
+    $message = "This University ID is already associated with an account. If it's your account, please sign in instead.";
+    $buttonText = "Back to Registration";
+    $buttonLink = "register.php";
+
+    break;
 
 }
 ?>
