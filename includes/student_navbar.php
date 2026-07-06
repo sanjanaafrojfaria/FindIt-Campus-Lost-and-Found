@@ -59,7 +59,7 @@
                 </li>
 
                 <li class="nav-item ms-lg-2">
-                    <a href="../index.php" class="btn btn-login">
+                    <a href="../logout.php" class="btn btn-login">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         Logout
                     </a>

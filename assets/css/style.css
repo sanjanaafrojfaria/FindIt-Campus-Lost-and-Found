@@ -451,17 +451,13 @@ SLIDER
 
     display:flex;
 
-     width:max-content;
+    width:max-content;
 
-    animation:scrollItems 30s linear infinite;
-
-}
-
-.slider:hover .slide-track{
-
-    animation-play-state:paused;
+    transition:transform .5s ease;
 
 }
+
+
 .slider{
 
     position:relative;

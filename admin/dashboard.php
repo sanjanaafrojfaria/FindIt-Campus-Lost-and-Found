@@ -39,57 +39,91 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <body>
 
+<?php include "navbar.php"; ?>
+
 <section class="dashboard-header">
 
-<div class="container text-center">
+    <div class="container text-center">
 
-<h2>
+        <h2>
+            Welcome back,
+            <span><?php echo htmlspecialchars($_SESSION['full_name']); ?></span>
+            👨‍💼
+        </h2>
 
-Welcome Admin,
+        <p>
+            Manage students, approvals and the entire FindIt system.
+        </p>
 
-<span><?php echo htmlspecialchars($_SESSION['full_name']); ?></span>
-
-</h2>
-
-<p>
-
-Manage the FindIt system.
-
-</p>
-
-</div>
+    </div>
 
 </section>
 
 <section class="dashboard-stats">
 
-<div class="container">
+    <div class="container">
 
-<div class="row justify-content-center">
+        <div class="row g-4">
 
-<div class="col-md-4">
+            <div class="col-lg-3 col-md-6">
 
-<div class="stat-card">
+                <div class="stat-card">
 
-<i class="fa-solid fa-user-clock stat-icon notify"></i>
+                    <i class="fa-solid fa-user-clock stat-icon notify"></i>
 
-<h2><?php echo $pending; ?></h2>
+                    <h2><?php echo $pending; ?></h2>
 
-<p>Pending Registrations</p>
+                    <p>Pending Approvals</p>
 
-<a href="users.php" class="btn btn-primary mt-3">
+                </div>
 
-Manage Users
+            </div>
 
-</a>
+            <div class="col-lg-3 col-md-6">
 
-</div>
+                <div class="stat-card">
 
-</div>
+                    <i class="fa-solid fa-users stat-icon found"></i>
 
-</div>
+                    <h2>0</h2>
 
-</div>
+                    <p>Approved Users</p>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <i class="fa-solid fa-circle-exclamation stat-icon lost"></i>
+
+                    <h2>0</h2>
+
+                    <p>Lost Reports</p>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <i class="fa-solid fa-hand-holding-heart stat-icon returned"></i>
+
+                    <h2>0</h2>
+
+                    <p>Found Reports</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </section>
 

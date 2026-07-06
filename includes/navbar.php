@@ -1,3 +1,10 @@
+<?php
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+?>
 <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
 
     <div class="container">
@@ -41,19 +48,33 @@
                     <a class="nav-link" href="index.php#features">Features</a>
                 </li>
 
-                <li class="nav-item ms-lg-3">
-                    <a class="btn btn-login"
-                       href="login.php">
-                        Login
-                    </a>
-                </li>
+                <?php if(!isset($_SESSION['user_id'])){ ?>
 
-                <li class="nav-item ms-lg-2">
-                    <a class="btn btn-register"
-                       href="register.php">
-                        Register
-                    </a>
-                </li>
+    <a href="login.php" class="btn btn-login">Login</a>
+
+    <a href="register.php" class="btn btn-register">Register</a>
+
+<?php } elseif($_SESSION['role'] == "Student"){ ?>
+
+    <a href="student/dashboard.php" class="btn btn-login">
+        Dashboard
+    </a>
+
+    <a href="logout.php" class="btn btn-register">
+        Logout
+    </a>
+
+<?php } elseif($_SESSION['role'] == "Admin"){ ?>
+
+    <a href="admin/dashboard.php" class="btn btn-login">
+        Admin Panel
+    </a>
+
+    <a href="logout.php" class="btn btn-register">
+        Logout
+    </a>
+
+<?php } ?>
 
             </ul>
 

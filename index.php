@@ -121,21 +121,51 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
             <div class="action-buttons">
 
-                <a href="#" class="btn-lost">
+                <?php if(!isset($_SESSION['user_id'])){ ?>
 
-                    <i class="fa-solid fa-circle-exclamation"></i>
+    <a href="login.php" class="btn-lost">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        Report Lost Item
+    </a>
 
-                    Report Lost Item
+<?php } elseif($_SESSION['role'] == "Student"){ ?>
 
-                </a>
+    <a href="student/report_lost.php" class="btn-lost">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        Report Lost Item
+    </a>
 
-                <a href="#" class="btn-found">
+<?php } else { ?>
 
-                    <i class="fa-solid fa-hand-holding-heart"></i>
+    <a href="admin/dashboard.php" class="btn-lost">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        Report Lost Item
+    </a>
 
-                    Report Found Item
+<?php } ?>
 
-                </a>
+                <?php if(!isset($_SESSION['user_id'])){ ?>
+
+    <a href="login.php" class="btn-found">
+        <i class="fa-solid fa-hand-holding-heart"></i>
+        Report Found Item
+    </a>
+
+<?php } elseif($_SESSION['role'] == "Student"){ ?>
+
+    <a href="student/report_found.php" class="btn-found">
+        <i class="fa-solid fa-hand-holding-heart"></i>
+        Report Found Item
+    </a>
+
+<?php } else { ?>
+
+    <a href="admin/dashboard.php" class="btn-found">
+        <i class="fa-solid fa-hand-holding-heart"></i>
+        Report Found Item
+    </a>
+
+<?php } ?>
 
             </div>
 
@@ -326,6 +356,93 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
         <div class="slide-track reverse-track">
 
+            <div class="item-card">
+
+                <span class="status found-status">
+
+                    FOUND
+
+                </span>
+
+                <h4>⌚ Smart Watch</h4>
+
+                <p><i class="fa-solid fa-location-dot"></i> Cafeteria</p>
+
+                <small>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    30 mins ago
+
+                </small>
+
+            </div>
+
+            <div class="item-card">
+
+                <span class="status found-status">
+
+                    FOUND
+
+                </span>
+
+                <h4>🔑 Keys</h4>
+
+                <p><i class="fa-solid fa-location-dot"></i> Main Gate</p>
+
+                <small>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    Today
+
+                </small>
+
+            </div>
+
+            <div class="item-card">
+
+                <span class="status found-status">
+
+                    FOUND
+
+                </span>
+
+                <h4>💧 Water Bottle</h4>
+
+                <p><i class="fa-solid fa-location-dot"></i> Auditorium</p>
+
+                <small>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    Yesterday
+
+                </small>
+
+            </div>
+
+            <div class="item-card">
+
+                <span class="status found-status">
+
+                    FOUND
+
+                </span>
+
+                <h4>⌚ Smart Watch</h4>
+
+                <p><i class="fa-solid fa-location-dot"></i> Cafeteria</p>
+
+                <small>
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    30 mins ago
+
+                </small>
+
+            </div>
             <div class="item-card">
 
                 <span class="status found-status">

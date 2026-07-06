@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != "Admin") {
 }
 
 include "../config/database.php";
-include "navbar.php";
 
 $sql = "SELECT * FROM users WHERE approval_status='Pending'";
 
@@ -19,102 +18,130 @@ $result = mysqli_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
 
-<title>Pending Users</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pending Users | FindIt</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <link rel="stylesheet" href="../assets/css/style.css">
 
-<style>
+<link rel="stylesheet" href="../assets/css/dashboard.css">
 
-body{
-
-padding-top:120px;
-
-background:#f8fafc;
-
-}
-
-</style>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 </head>
 
 <body>
 
-<div class="container">
+<?php include "navbar.php"; ?>
 
-<h2 class="mb-4">
+<div class="container" style="padding-top:130px; padding-bottom:60px;">
 
-Pending Registrations
+    <h2 class="text-center mb-5">
 
-</h2>
+        Pending Student Accounts
 
-<table class="table table-bordered table-hover">
+    </h2>
 
-<thead>
+    <div class="row g-4">
 
-<tr>
+        <?php if(mysqli_num_rows($result) > 0){ ?>
 
-<th>Name</th>
+            <?php while($user = mysqli_fetch_assoc($result)){ ?>
 
-<th>ID</th>
+                <div class="col-lg-6">
 
-<th>Email</th>
+                    <div class="user-card">
 
-<th>Department</th>
+                        <h4>
 
-<th>Action</th>
+                            <i class="fa-solid fa-user text-primary"></i>
 
-</tr>
+                            <?php echo htmlspecialchars($user['full_name']); ?>
 
-</thead>
+                        </h4>
 
-<tbody>
+                        <p>
 
-<?php while($user=mysqli_fetch_assoc($result)){ ?>
+                            <strong>ID:</strong>
 
-<tr>
+                            <?php echo htmlspecialchars($user['university_id']); ?>
 
-<td><?= $user['full_name'] ?></td>
+                        </p>
 
-<td><?= $user['university_id'] ?></td>
+                        <p>
 
-<td><?= $user['email'] ?></td>
+                            <strong>Email:</strong>
 
-<td><?= $user['department'] ?></td>
+                            <?php echo htmlspecialchars($user['email']); ?>
 
-<td>
+                        </p>
 
-<a href="approve.php?id=<?= $user['id'] ?>" class="btn btn-success btn-sm">
+                        <p>
 
-Approve
+                            <strong>Department:</strong>
 
-</a>
+                            <?php echo htmlspecialchars($user['department']); ?>
 
-<a href="reject.php?id=<?= $user['id'] ?>" class="btn btn-danger btn-sm">
+                        </p>
 
-Reject
+                        <div class="mt-4">
 
-</a>
+                            <a href="approve.php?id=<?php echo $user['id']; ?>"
+                               class="btn btn-success">
 
-</td>
+                                <i class="fa-solid fa-check"></i>
 
-</tr>
+                                Approve
 
-<?php } ?>
+                            </a>
 
-</tbody>
+                            <a href="reject.php?id=<?php echo $user['id']; ?>"
+                               class="btn btn-danger">
 
-</table>
+                                <i class="fa-solid fa-xmark"></i>
+
+                                Reject
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            <?php } ?>
+
+        <?php } else { ?>
+
+            <div class="col-12">
+
+                <div class="alert alert-success text-center">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    No pending registrations.
+
+                </div>
+
+            </div>
+
+        <?php } ?>
+
+    </div>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

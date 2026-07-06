@@ -261,3 +261,46 @@
     margin-bottom:30px;
 
 }
+/* ==========================
+   ADMIN USER CARDS
+========================== */
+
+.user-card{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+    height:100%;
+
+}
+
+.user-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 20px 40px rgba(37,99,235,.15);
+
+}
+
+.user-card h4{
+
+    font-weight:700;
+
+    margin-bottom:18px;
+
+}
+
+.user-card p{
+
+    margin-bottom:8px;
+
+    color:#64748b;
+
+}
