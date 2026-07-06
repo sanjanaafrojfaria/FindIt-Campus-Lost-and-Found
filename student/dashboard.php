@@ -9,7 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 
 }
 
-include "../includes/navbar.php";
 
 ?>
 
@@ -34,87 +33,96 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 </head>
 
 <body>
+<?php include "../includes/student_navbar.php"; ?>
 
-<section class="dashboard-hero">
+<section class="dashboard-header">
 
-<div class="container">
+    <div class="container text-center">
 
-<h1>
+        <h2>
 
-Welcome Back,
+            Welcome back,
 
-<span><?php echo htmlspecialchars($_SESSION['full_name']); ?></span>
+            <span>
 
-👋
+                <?php
 
-</h1>
+                $name = explode(" ", $_SESSION['full_name']);
 
-<p>
+                echo htmlspecialchars($name[0]);
 
-Manage your lost and found activities from one place.
+                ?>
 
-</p>
+            </span>
 
-</div>
+            👋
+
+        </h2>
+
+        <p>
+
+            Manage your lost and found activities from one place.
+
+        </p>
+
+    </div>
 
 </section>
-<section class="dashboard-stats">
+<section class="quick-actions">
 
     <div class="container">
 
+        <h2 class="section-title">
+
+            Quick Actions
+
+        </h2>
+
         <div class="row g-4">
 
-            <div class="col-lg-3 col-md-6">
+            <div class="col-md-6">
 
-                <div class="stat-card">
+                <div class="action-card lost-card">
 
-                    <i class="fa-solid fa-circle-exclamation stat-icon lost"></i>
+                    <i class="fa-solid fa-circle-exclamation action-icon"></i>
 
-                    <h2>0</h2>
+                    <h3>Report Lost Item</h3>
 
-                    <p>Lost Items</p>
+                    <p>
 
-                </div>
+                        Lost something on campus? Submit a report and let others help you find it.
 
-            </div>
+                    </p>
 
-            <div class="col-lg-3 col-md-6">
+                    <a href="report_lost.php" class="btn btn-danger">
 
-                <div class="stat-card">
+                        Report Lost
 
-                    <i class="fa-solid fa-hand-holding-heart stat-icon found"></i>
-
-                    <h2>0</h2>
-
-                    <p>Found Items</p>
+                    </a>
 
                 </div>
 
             </div>
 
-            <div class="col-lg-3 col-md-6">
+            <div class="col-md-6">
 
-                <div class="stat-card">
+                <div class="action-card found-card">
 
-                    <i class="fa-solid fa-bell stat-icon notify"></i>
+                    <i class="fa-solid fa-hand-holding-heart action-icon"></i>
 
-                    <h2>0</h2>
+                    <h3>Report Found Item</h3>
 
-                    <p>Notifications</p>
+                    <p>
 
-                </div>
+                        Found an item? Report it so it can be returned to its rightful owner.
 
-            </div>
+                    </p>
 
-            <div class="col-lg-3 col-md-6">
+                    <a href="report_found.php" class="btn btn-success">
 
-                <div class="stat-card">
+                        Report Found
 
-                    <i class="fa-solid fa-check-circle stat-icon returned"></i>
-
-                    <h2>0</h2>
-
-                    <p>Returned Items</p>
+                    </a>
 
                 </div>
 

@@ -1,68 +1,86 @@
-.dashboard-hero{
+/* ==========================
+   DASHBOARD HEADER
+========================== */
 
-    padding:160px 0 70px;
+.dashboard-header{
 
-    background:linear-gradient(135deg,#0f172a,#1e3a8a);
+    padding:120px 0 35px;
 
-    color:white;
+    text-align:center;
 
 }
 
-.dashboard-hero h1{
+.dashboard-header .container{
 
-    font-size:48px;
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+.dashboard-header h2{
+
+    font-size:42px;
 
     font-weight:700;
 
-}
-
-.dashboard-hero span{
-
-    color:#22d3ee;
+    color:#0f172a;
 
 }
 
-.dashboard-hero p{
+.dashboard-header span{
 
-    margin-top:15px;
+    color:#2563eb;
+
+}
+
+.dashboard-header p{
+
+    margin-top:12px;
+
+    color:#64748b;
 
     font-size:18px;
 
-    color:#dbeafe;
-
 }
+
 /* ==========================
-   DASHBOARD STATS
+   STATISTICS
 ========================== */
 
 .dashboard-stats{
 
-    margin-top:-45px;
-    padding-bottom:60px;
+    padding-bottom:50px;
 
 }
 
 .stat-card{
 
-    background:white;
+    background:#fff;
 
     border-radius:20px;
 
-    padding:35px;
+    padding:30px;
 
     text-align:center;
 
-    box-shadow:0 12px 35px rgba(0,0,0,.08);
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
 
     transition:.3s;
+
+    height:100%;
 
 }
 
 .stat-card:hover{
 
-    transform:translateY(-8px);
+    transform:translateY(-5px);
 
-    box-shadow:0 20px 40px rgba(37,99,235,.15);
+    box-shadow:0 18px 40px rgba(37,99,235,.15);
 
 }
 
@@ -100,7 +118,7 @@
 
 .stat-card h2{
 
-    font-size:38px;
+    font-size:40px;
 
     font-weight:700;
 
@@ -110,8 +128,136 @@
 
 .stat-card p{
 
+    margin:0;
+
     color:#64748b;
 
-    margin:0;
+}
+/* ==========================
+   QUICK ACTIONS
+========================== */
+
+.quick-actions{
+
+    padding:20px 0 70px;
+
+}
+
+.section-title{
+
+    text-align:center;
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    margin-bottom:40px;
+
+}
+
+.action-card{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:35px;
+
+    text-align:center;
+
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+    height:100%;
+
+}
+
+.action-card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:0 20px 40px rgba(37,99,235,.15);
+
+}
+
+.action-icon{
+
+    font-size:48px;
+
+    margin-bottom:20px;
+
+}
+
+.lost-card .action-icon{
+
+    color:#ef4444;
+
+}
+
+.found-card .action-icon{
+
+    color:#10b981;
+
+}
+
+.action-card h3{
+
+    font-weight:700;
+
+    margin-bottom:15px;
+
+}
+
+.action-card p{
+
+    color:#64748b;
+
+    margin-bottom:25px;
+
+    line-height:1.7;
+
+}
+/* ==========================
+   REPORT PAGE
+========================== */
+
+.report-section{
+
+    padding:120px 0 70px;
+
+}
+
+.report-card{
+
+    max-width:750px;
+
+    margin:auto;
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:40px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+
+}
+
+.report-card h2{
+
+    font-weight:700;
+
+    margin-bottom:15px;
+
+}
+
+.report-card p{
+
+    color:#64748b;
+
+    margin-bottom:30px;
 
 }

@@ -84,5 +84,14 @@ $_SESSION['user_id'] = $user['id'];
 $_SESSION['full_name'] = $user['full_name'];
 $_SESSION['email'] = $user['email'];
 $_SESSION['role'] = $user['role'];
-header("Location: student/dashboard.php");
+if ($user['role'] == "Admin") {
+
+    header("Location: admin/dashboard.php");
+
+} else {
+
+    header("Location: student/dashboard.php");
+
+}
+
 exit();
