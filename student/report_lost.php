@@ -141,7 +141,7 @@ required>
 <input
 type="date"
 class="form-control"
-name="date_lost"
+name="lost_date"
 required>
 
 </div>
@@ -153,7 +153,7 @@ required>
 <input
 type="file"
 class="form-control"
-name="item_image"
+name="image"
 accept=".jpg,.jpeg,.png">
 
 </div>

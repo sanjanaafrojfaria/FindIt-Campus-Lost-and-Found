@@ -106,6 +106,16 @@ switch ($action) {
     $buttonLink = "index.php";
 
     break;
+    case "lost_report_success":
+
+    $icon = "fa-circle-check";
+    $color = "#10b981";
+    $title = "Lost Item Report Submitted";
+    $message = "Your lost item report has been submitted successfully. Other students and the administrator can now view it.";
+    $buttonText = "Go to Dashboard";
+    $buttonLink = "student/dashboard.php";
+
+    break;
 
 }
 ?>

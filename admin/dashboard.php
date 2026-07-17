@@ -10,15 +10,18 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != "Admin") {
 }
 
 include "../config/database.php";
-include "navbar.php";
 
+// Pending users
 $result = mysqli_query($conn, "SELECT COUNT(*) AS total FROM users WHERE approval_status='Pending'");
 $pending = mysqli_fetch_assoc($result)['total'];
+
+// Approved users
+$result = mysqli_query($conn, "SELECT COUNT(*) AS total FROM users WHERE approval_status='Approved'");
+$approved = mysqli_fetch_assoc($result)['total'];
 
 ?>
 
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -35,6 +38,23 @@ $pending = mysqli_fetch_assoc($result)['total'];
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
+<style>
+
+.dashboard-link{
+
+    text-decoration:none;
+    color:inherit;
+
+}
+
+.dashboard-link:hover{
+
+    color:inherit;
+
+}
+
+</style>
+
 </head>
 
 <body>
@@ -46,13 +66,19 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     <div class="container text-center">
 
         <h2>
+
             Welcome back,
+
             <span><?php echo htmlspecialchars($_SESSION['full_name']); ?></span>
+
             👨‍💼
+
         </h2>
 
         <p>
+
             Manage students, approvals and the entire FindIt system.
+
         </p>
 
     </div>
@@ -65,27 +91,33 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
         <div class="row g-4">
 
+            <!-- Pending Approvals -->
             <div class="col-lg-3 col-md-6">
 
-                <div class="stat-card">
+                <a href="users.php" class="dashboard-link">
 
-                    <i class="fa-solid fa-user-clock stat-icon notify"></i>
+                    <div class="stat-card">
 
-                    <h2><?php echo $pending; ?></h2>
+                        <i class="fa-solid fa-user-clock stat-icon notify"></i>
 
-                    <p>Pending Approvals</p>
+                        <h2><?php echo $pending; ?></h2>
 
-                </div>
+                        <p>Pending Approvals</p>
+
+                    </div>
+
+                </a>
 
             </div>
 
+            <!-- Approved Users -->
             <div class="col-lg-3 col-md-6">
 
                 <div class="stat-card">
 
                     <i class="fa-solid fa-users stat-icon found"></i>
 
-                    <h2>0</h2>
+                    <h2><?php echo $approved; ?></h2>
 
                     <p>Approved Users</p>
 
@@ -93,6 +125,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
             </div>
 
+            <!-- Lost Reports -->
             <div class="col-lg-3 col-md-6">
 
                 <div class="stat-card">
@@ -107,6 +140,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
             </div>
 
+            <!-- Found Reports -->
             <div class="col-lg-3 col-md-6">
 
                 <div class="stat-card">
