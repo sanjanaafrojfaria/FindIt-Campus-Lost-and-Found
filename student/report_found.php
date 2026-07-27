@@ -12,7 +12,6 @@ if (!isset($_SESSION['user_id'])) {
 ?>
 
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -20,7 +19,7 @@ if (!isset($_SESSION['user_id'])) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Report Lost Item | FindIt</title>
+<title>Report Found Item | FindIt</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -44,25 +43,23 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <h2 class="report-title">
 
-<i class="fa-solid fa-circle-exclamation text-danger"></i>
+<i class="fa-solid fa-hand-holding-heart text-success"></i>
 
-Report Lost Item
+Report Found Item
 
 </h2>
 
 <p class="report-subtitle">
 
-Help the FindIt community locate your lost belongings.
+Help someone reunite with their lost belongings.
 
 </p>
 
-<form action="../report_lost_process.php"
+<form action="../report_found_process.php"
 
 method="POST"
 
 enctype="multipart/form-data">
-
-<!-- Item Name + Category -->
 
 <div class="row">
 
@@ -84,6 +81,7 @@ placeholder="Example: Black Wallet"
 required>
 
 </div>
+
 
 <div class="col-md-6 mb-3">
 
@@ -118,7 +116,6 @@ required>
 
 </div>
 
-<!-- Location + Date -->
 
 <div class="row">
 
@@ -128,7 +125,7 @@ required>
 
 <i class="fa-solid fa-location-dot me-2"></i>
 
-Location Lost
+Location Found
 
 </label>
 
@@ -151,27 +148,27 @@ required>
 
 </div>
 
+
 <div class="col-md-6 mb-3">
 
 <label class="form-label">
 
 <i class="fa-solid fa-calendar me-2"></i>
 
-Date Lost
+Date Found
 
 </label>
 
 <input
 type="date"
 class="form-control"
-name="lost_date"
+name="found_date"
 required>
 
 </div>
 
 </div>
 
-<!-- Upload Image -->
 
 <div class="mb-3">
 
@@ -191,7 +188,6 @@ accept=".jpg,.jpeg,.png">
 
 </div>
 
-<!-- Description -->
 
 <div class="mb-4">
 
@@ -207,20 +203,19 @@ Description
 class="form-control"
 rows="3"
 name="description"
-placeholder="Mention color, brand, special marks or any identifying information."
+placeholder="Describe the item's color, brand, special marks or where you found it."
 required></textarea>
 
 </div>
 
-<!-- Submit Button -->
 
 <button
 type="submit"
-class="btn btn-danger btn-submit">
+class="btn btn-success btn-submit">
 
 <i class="fa-solid fa-paper-plane"></i>
 
-Submit Lost Report
+Submit Found Report
 
 </button>
 

@@ -117,6 +117,28 @@ switch ($action) {
 
     break;
 
+    case "found_report_success":
+
+    $icon = "fa-circle-check";
+    $color = "#10b981";
+    $title = "Found Item Report Submitted";
+    $message = "Your found item report has been submitted successfully. Other students and the administrator can now view it.";
+    $buttonText = "Go to Dashboard";
+    $buttonLink = "student/dashboard.php";
+
+    break;
+    
+    case "found_report_failed":
+
+    $icon = "fa-circle-xmark";
+    $color = "#ef4444";
+    $title = "Report Failed";
+    $message = "Something went wrong while submitting your found item report. Please try again.";
+    $buttonText = "Try Again";
+    $buttonLink = "student/report_found.php";
+
+    break;
+
 }
 ?>
 
