@@ -802,3 +802,296 @@ font-size:28px;
     text-shadow: 0 0 12px #22d3ee, 0 0 25px #22d3ee;
     transform: scale(1.1);
 }
+/* ==========================
+   RECENT ITEMS
+========================== */
+
+.recent-items{
+
+    padding:50px 0;
+
+    background:#f8fafc;
+
+}
+
+
+/* ==========================
+   HEADER
+========================== */
+
+.recent-items-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+
+.carousel-title{
+
+    margin:0;
+
+    font-size:26px;
+
+    font-weight:700;
+
+}
+
+
+.carousel-title.found{
+
+    color:#15803d;
+
+}
+
+
+/* ==========================
+   CAROUSEL BUTTONS
+========================== */
+
+.carousel-buttons{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+
+.carousel-btn{
+
+    width:42px;
+
+    height:42px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#ffffff;
+
+    color:#334155;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.12);
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+
+.carousel-btn:hover{
+
+    background:#2563eb;
+
+    color:white;
+
+    transform:translateY(-2px);
+
+}
+
+
+/* ==========================
+   ITEMS CONTAINER
+========================== */
+
+.items-container{
+
+    display:flex;
+
+    gap:20px;
+
+    overflow-x:auto;
+
+    scroll-behavior:smooth;
+
+    scroll-snap-type:x mandatory;
+
+    padding:10px 5px 20px;
+
+    scrollbar-width:none;
+
+}
+
+
+.items-container::-webkit-scrollbar{
+
+    display:none;
+
+}
+
+
+/* ==========================
+   ITEM CARD
+========================== */
+
+.item-card{
+
+    flex:0 0 280px;
+
+    scroll-snap-align:start;
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:18px;
+
+    box-shadow:0 8px 25px rgba(15,23,42,.08);
+
+    transition:.3s;
+
+}
+
+
+.item-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 15px 35px rgba(15,23,42,.15);
+
+}
+
+
+/* ==========================
+   ITEM IMAGE
+========================== */
+
+.item-image{
+
+    width:100%;
+
+    height:160px;
+
+    object-fit:cover;
+
+    border-radius:12px;
+
+    margin:12px 0 15px;
+
+}
+
+
+.item-card h4{
+
+    font-size:19px;
+
+    font-weight:600;
+
+    margin-bottom:10px;
+
+    color:#0f172a;
+
+}
+
+
+.item-card p{
+
+    color:#64748b;
+
+    margin-bottom:8px;
+
+}
+
+
+.item-card small{
+
+    color:#94a3b8;
+
+}
+
+
+/* ==========================
+   STATUS
+========================== */
+
+.status{
+
+    display:inline-block;
+
+    padding:5px 12px;
+
+    border-radius:20px;
+
+    font-size:11px;
+
+    font-weight:700;
+
+}
+
+
+.lost-status{
+
+    background:#fee2e2;
+
+    color:#dc2626;
+
+}
+
+
+.found-status{
+
+    background:#dcfce7;
+
+    color:#16a34a;
+
+}
+
+
+/* ==========================
+   NO ITEMS
+========================== */
+
+.no-items{
+
+    width:100%;
+
+    text-align:center;
+
+    padding:40px;
+
+    color:#64748b;
+
+}
+
+
+.no-items i{
+
+    font-size:40px;
+
+    margin-bottom:10px;
+
+}
+
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media(max-width:768px){
+
+    .recent-items-header{
+
+        align-items:flex-start;
+
+    }
+
+    .carousel-title{
+
+        font-size:21px;
+
+    }
+
+    .item-card{
+
+        flex:0 0 250px;
+
+    }
+
+}

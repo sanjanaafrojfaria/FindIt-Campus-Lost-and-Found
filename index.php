@@ -1,4 +1,43 @@
+<?php
+
+session_start();
+
+include "config/database.php";
+
+
+/* ===========================
+   LATEST LOST ITEMS
+=========================== */
+
+$lost_query = "
+    SELECT *
+    FROM lost_items
+    WHERE status = 'Open'
+    ORDER BY created_at DESC
+    LIMIT 6
+";
+
+$lost_result = mysqli_query($conn, $lost_query);
+
+
+/* ===========================
+   LATEST FOUND ITEMS
+=========================== */
+
+$found_query = "
+    SELECT *
+    FROM found_items
+    WHERE status = 'Available'
+    ORDER BY created_at DESC
+    LIMIT 6
+";
+
+$found_result = mysqli_query($conn, $found_query);
+
+?>
+
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -180,163 +219,132 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <!-- LATEST LOST ITEMS -->
 
+<!-- LATEST LOST ITEMS -->
+
 <section class="recent-items">
 
     <div class="container">
 
-        <h3 class="carousel-title">
+        <div class="recent-items-header">
 
-            🔴 Latest Lost Items
+            <h3 class="carousel-title">
 
-        </h3>
+                🔴 Latest Lost Items
 
-    </div>
+            </h3>
 
-    <div class="slider">
+            <div class="carousel-buttons">
 
-        <div class="slide-track">
+                <button
+                    class="carousel-btn"
+                    onclick="scrollItems('lost-items', 'left')">
 
-            <!-- Lost Card -->
+                    <i class="fa-solid fa-chevron-left"></i>
 
-            <div class="item-card">
+                </button>
 
-                <span class="status lost-status">
+                <button
+                    class="carousel-btn"
+                    onclick="scrollItems('lost-items', 'right')">
 
-                    LOST
+                    <i class="fa-solid fa-chevron-right"></i>
 
-                </span>
-
-                <h4>🎒 Black Backpack</h4>
-
-                <p><i class="fa-solid fa-location-dot"></i> Engineering Building</p>
-
-                <small>
-
-                    <i class="fa-regular fa-clock"></i>
-
-                    2 hours ago
-
-                </small>
+                </button>
 
             </div>
 
-            <div class="item-card">
+        </div>
 
-                <span class="status lost-status">
 
-                    LOST
+        <div class="items-container" id="lost-items">
 
-                </span>
+            <?php if(mysqli_num_rows($lost_result) > 0){ ?>
 
-                <h4>📱 Samsung Phone</h4>
+                <?php while($item = mysqli_fetch_assoc($lost_result)){ ?>
 
-                <p><i class="fa-solid fa-location-dot"></i> Library</p>
+                    <div class="item-card">
 
-                <small>
+                        <span class="status lost-status">
 
-                    <i class="fa-regular fa-clock"></i>
+                            LOST
 
-                    Today
+                        </span>
 
-                </small>
 
-            </div>
+                        <?php
 
-            <div class="item-card">
+                        if (
+    empty($item['image']) ||
+    $item['image'] === 'default-item.png'
+) {
 
-                <span class="status lost-status">
+    $image = "assets/images/default-item.png";
 
-                    LOST
+} else {
 
-                </span>
+    $image = "uploads/lost_items/" . $item['image'];
 
-                <h4>🪪 Student ID</h4>
+}
 
-                <p><i class="fa-solid fa-location-dot"></i> CSE Building</p>
+                        ?>
 
-                <small>
 
-                    <i class="fa-regular fa-clock"></i>
+                        <img
+                            src="<?= htmlspecialchars($image) ?>"
+                            class="item-image"
+                            alt="Lost Item">
 
-                    Yesterday
 
-                </small>
+                        <h4>
 
-            </div>
+                            <?= htmlspecialchars($item['item_name']) ?>
 
-            <!-- Duplicate -->
+                        </h4>
 
-            <div class="item-card">
 
-                <span class="status lost-status">
+                        <p>
 
-                    LOST
+                            <i class="fa-solid fa-location-dot"></i>
 
-                </span>
+                            <?= htmlspecialchars($item['location']) ?>
 
-                <h4>🎒 Black Backpack</h4>
+                        </p>
 
-                <p><i class="fa-solid fa-location-dot"></i> Engineering Building</p>
 
-                <small>
+                        <small>
 
-                    <i class="fa-regular fa-clock"></i>
+                            <i class="fa-regular fa-calendar"></i>
 
-                    2 hours ago
+                            <?= date("M d, Y", strtotime($item['lost_date'])) ?>
 
-                </small>
+                        </small>
 
-            </div>
-            <div class="item-card">
+                    </div>
 
-                <span class="status lost-status">
+                <?php } ?>
 
-                    LOST
+            <?php } else { ?>
 
-                </span>
+                <div class="no-items">
 
-                <h4>📱 Samsung Phone</h4>
+                    <i class="fa-solid fa-box-open"></i>
 
-                <p><i class="fa-solid fa-location-dot"></i> Library</p>
+                    <p>
 
-                <small>
+                        No lost items reported yet.
 
-                    <i class="fa-regular fa-clock"></i>
+                    </p>
 
-                    Today
+                </div>
 
-                </small>
-
-            </div>
-
-            <div class="item-card">
-
-                <span class="status lost-status">
-
-                    LOST
-
-                </span>
-
-                <h4>🪪 Student ID</h4>
-
-                <p><i class="fa-solid fa-location-dot"></i> CSE Building</p>
-
-                <small>
-
-                    <i class="fa-regular fa-clock"></i>
-
-                    Yesterday
-
-                </small>
-
-            </div>
+            <?php } ?>
 
         </div>
 
     </div>
 
 </section>
-
+<!-- LATEST FOUND ITEMS -->
 
 <!-- LATEST FOUND ITEMS -->
 
@@ -344,192 +352,121 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
     <div class="container">
 
-        <h3 class="carousel-title found">
+        <div class="recent-items-header">
 
-            🟢 Latest Found Items
+            <h3 class="carousel-title found">
 
-        </h3>
+                🟢 Latest Found Items
 
-    </div>
+            </h3>
 
-    <div class="slider reverse">
 
-        <div class="slide-track reverse-track">
+            <div class="carousel-buttons">
 
-            <div class="item-card">
+                <button
+                    class="carousel-btn"
+                    onclick="scrollItems('found-items', 'left')">
 
-                <span class="status found-status">
+                    <i class="fa-solid fa-chevron-left"></i>
 
-                    FOUND
+                </button>
 
-                </span>
 
-                <h4>⌚ Smart Watch</h4>
+                <button
+                    class="carousel-btn"
+                    onclick="scrollItems('found-items', 'right')">
 
-                <p><i class="fa-solid fa-location-dot"></i> Cafeteria</p>
+                    <i class="fa-solid fa-chevron-right"></i>
 
-                <small>
-
-                    <i class="fa-regular fa-clock"></i>
-
-                    30 mins ago
-
-                </small>
+                </button>
 
             </div>
 
-            <div class="item-card">
+        </div>
 
-                <span class="status found-status">
 
-                    FOUND
+        <div class="items-container" id="found-items">
 
-                </span>
+            <?php if(mysqli_num_rows($found_result) > 0){ ?>
 
-                <h4>🔑 Keys</h4>
+                <?php while($item = mysqli_fetch_assoc($found_result)){ ?>
 
-                <p><i class="fa-solid fa-location-dot"></i> Main Gate</p>
+                    <div class="item-card">
 
-                <small>
+                        <span class="status found-status">
 
-                    <i class="fa-regular fa-clock"></i>
+                            FOUND
 
-                    Today
+                        </span>
 
-                </small>
 
-            </div>
+                        <?php
 
-            <div class="item-card">
+                        if (
+    empty($item['image']) ||
+    $item['image'] === 'default-item.png'
+) {
 
-                <span class="status found-status">
+    $image = "assets/images/default-item.png";
 
-                    FOUND
+} else {
 
-                </span>
+    $image = "uploads/found_items/" . $item['image'];
 
-                <h4>💧 Water Bottle</h4>
+}
 
-                <p><i class="fa-solid fa-location-dot"></i> Auditorium</p>
+                        ?>
 
-                <small>
 
-                    <i class="fa-regular fa-clock"></i>
+                        <img
+                            src="<?= htmlspecialchars($image) ?>"
+                            class="item-image"
+                            alt="Found Item">
 
-                    Yesterday
 
-                </small>
+                        <h4>
 
-            </div>
+                            <?= htmlspecialchars($item['item_name']) ?>
 
-            <div class="item-card">
+                        </h4>
 
-                <span class="status found-status">
 
-                    FOUND
+                        <p>
 
-                </span>
+                            <i class="fa-solid fa-location-dot"></i>
 
-                <h4>⌚ Smart Watch</h4>
+                            <?= htmlspecialchars($item['location']) ?>
 
-                <p><i class="fa-solid fa-location-dot"></i> Cafeteria</p>
+                        </p>
 
-                <small>
 
-                    <i class="fa-regular fa-clock"></i>
+                        <small>
 
-                    30 mins ago
+                            <i class="fa-regular fa-calendar"></i>
 
-                </small>
+                            <?= date("M d, Y", strtotime($item['found_date'])) ?>
 
-            </div>
-            <div class="item-card">
+                        </small>
 
-                <span class="status found-status">
+                    </div>
 
-                    FOUND
+                <?php } ?>
 
-                </span>
+            <?php } else { ?>
 
-                <h4>⌚ Smart Watch</h4>
+                <div class="no-items">
 
-                <p><i class="fa-solid fa-location-dot"></i> Cafeteria</p>
+                    <i class="fa-solid fa-box-open"></i>
 
-                <small>
+                    <p>
 
-                    <i class="fa-regular fa-clock"></i>
+                        No found items reported yet.
 
-                    30 mins ago
+                    </p>
 
-                </small>
+                </div>
 
-            </div>
-
-            <div class="item-card">
-
-                <span class="status found-status">
-
-                    FOUND
-
-                </span>
-
-                <h4>🔑 Keys</h4>
-
-                <p><i class="fa-solid fa-location-dot"></i> Main Gate</p>
-
-                <small>
-
-                    <i class="fa-regular fa-clock"></i>
-
-                    Today
-
-                </small>
-
-            </div>
-
-            <div class="item-card">
-
-                <span class="status found-status">
-
-                    FOUND
-
-                </span>
-
-                <h4>💧 Water Bottle</h4>
-
-                <p><i class="fa-solid fa-location-dot"></i> Auditorium</p>
-
-                <small>
-
-                    <i class="fa-regular fa-clock"></i>
-
-                    Yesterday
-
-                </small>
-
-            </div>
-
-            <div class="item-card">
-
-                <span class="status found-status">
-
-                    FOUND
-
-                </span>
-
-                <h4>⌚ Smart Watch</h4>
-
-                <p><i class="fa-solid fa-location-dot"></i> Cafeteria</p>
-
-                <small>
-
-                    <i class="fa-regular fa-clock"></i>
-
-                    30 mins ago
-
-                </small>
-
-            </div>
+            <?php } ?>
 
         </div>
 
@@ -839,5 +776,39 @@ Register Now
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/script.js"></script>
+<script>
+
+function scrollItems(containerId, direction){
+
+    const container =
+        document.getElementById(containerId);
+
+    const scrollAmount = 320;
+
+    if(direction === "left"){
+
+        container.scrollBy({
+
+            left: -scrollAmount,
+
+            behavior: "smooth"
+
+        });
+
+    } else {
+
+        container.scrollBy({
+
+            left: scrollAmount,
+
+            behavior: "smooth"
+
+        });
+
+    }
+
+}
+
+</script>
 </body>
 </html>
