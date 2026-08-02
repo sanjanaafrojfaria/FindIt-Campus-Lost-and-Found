@@ -10,6 +10,18 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != "Admin") {
 }
 
 include "../config/database.php";
+// Lost reports
+$result = mysqli_query($conn,
+"SELECT COUNT(*) AS total FROM lost_items");
+
+$lost = mysqli_fetch_assoc($result)['total'];
+
+
+// Found reports
+$result = mysqli_query($conn,
+"SELECT COUNT(*) AS total FROM found_items");
+
+$found = mysqli_fetch_assoc($result)['total'];
 
 // Pending users
 $result = mysqli_query($conn, "SELECT COUNT(*) AS total FROM users WHERE approval_status='Pending'");
@@ -61,25 +73,35 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <?php include "navbar.php"; ?>
 
-<section class="dashboard-header">
+<section class="admin-header">
 
-    <div class="container text-center">
+    <div class="container">
 
-        <h2>
+        <div class="admin-header-content">
 
-            Welcome back,
+            <div class="admin-icon">
 
-            <span><?php echo htmlspecialchars($_SESSION['full_name']); ?></span>
+                <i class="fa-solid fa-user-shield"></i>
 
-            👨‍💼
+            </div>
 
-        </h2>
+            <div>
 
-        <p>
+                <h2>
+                    Welcome back,
+                    <span>
+                    <?php echo htmlspecialchars($_SESSION['full_name']); ?>
+                    </span>
+                    👨‍💼
+                </h2>
 
-            Manage students, approvals and the entire FindIt system.
+                <p>
+                    Manage users, approvals and monitor the FindIt platform.
+                </p>
 
-        </p>
+            </div>
+
+        </div>
 
     </div>
 
@@ -132,7 +154,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
                     <i class="fa-solid fa-circle-exclamation stat-icon lost"></i>
 
-                    <h2>0</h2>
+                    <h2><h2><?php echo $lost; ?></h2>
+
 
                     <p>Lost Reports</p>
 
@@ -147,7 +170,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
                     <i class="fa-solid fa-hand-holding-heart stat-icon returned"></i>
 
-                    <h2>0</h2>
+                    <h2><?php echo $found; ?></h2>
 
                     <p>Found Reports</p>
 

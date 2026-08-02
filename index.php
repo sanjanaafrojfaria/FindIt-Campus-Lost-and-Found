@@ -50,9 +50,6 @@ $found_result = mysqli_query($conn, $found_query);
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-<link rel="stylesheet"
 href="assets/css/style.css">
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -348,7 +345,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <!-- LATEST FOUND ITEMS -->
 
-<section class="recent-items">
+<section id="found-items" class="recent-items">
 
     <div class="container">
 
@@ -764,7 +761,8 @@ Join the FindIt community today.
 </p>
 
 <a href="register.php"
-class="btn btn-light btn-lg">
+class="btn-register">
+<i class="fa-solid fa-user-plus"></i>
 Register Now
 </a>
 
