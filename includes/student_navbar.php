@@ -40,9 +40,10 @@
                     <a class="nav-link" href="report_found.php">Report Found</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="my_items.php">My Items</a>
-                </li>
+                <a class="nav-link" href="../student/my_reports.php">
+                <i class="fa-solid fa-folder-open"></i>
+                My Reports
+                </a>
 
                 <li class="nav-item">
                     <a class="nav-link" href="notifications.php">Notifications</a>

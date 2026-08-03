@@ -24,6 +24,11 @@ $item_name = trim($_POST['item_name']);
 $category = trim($_POST['category']);
 $location = trim($_POST['location']);
 $found_date = $_POST['found_date'];
+if (strtotime($found_date) > time()) {
+
+    die("Future dates are not allowed.");
+
+}
 $description = trim($_POST['description']);
 
 $image_name = "default-item.png";

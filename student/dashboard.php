@@ -81,6 +81,41 @@ $returned_count = $result->fetch_assoc()['total'];
 ========================== */
 
 $notification_count = 0;
+/* ==========================
+   RECENT REPORTS
+========================== */
+
+$recent_reports = mysqli_query($conn, "
+
+SELECT
+    id,
+    item_name,
+    location,
+    lost_date AS report_date,
+    status,
+    image,
+    'Lost' AS type
+FROM lost_items
+WHERE user_id = $user_id
+
+UNION ALL
+
+SELECT
+    id,
+    item_name,
+    location,
+    found_date AS report_date,
+    status,
+    image,
+    'Found' AS type
+FROM found_items
+WHERE user_id = $user_id
+
+ORDER BY report_date DESC
+
+LIMIT 3
+
+");
 
 
 $name = explode(" ", $_SESSION['full_name']);
@@ -175,10 +210,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         View My Reports
     </a>
 
-    <a href="found_items.php" class="btn btn-outline-primary">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        Browse Found Items
+    <a href="profile.php" class="btn btn-outline-primary">
+        <i class="fa-solid fa-user"></i>
+        My Profile
     </a>
+
 
 </div>
 
@@ -406,62 +442,151 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 <section class="recent-activity">
 
-    <div class="container">
+<div class="container">
 
-        <div class="section-heading">
+<div class="section-heading">
 
-            <div>
+<div>
 
-                <span class="section-label">
+<span class="section-label">
 
-                    YOUR ACTIVITY
+YOUR ACTIVITY
 
-                </span>
+</span>
 
-                <h2>Recent Reports</h2>
+<h2>Recent Reports</h2>
 
-            </div>
+</div>
 
-            <a href="my_reports.php" class="view-all">
+<a href="my_reports.php" class="view-all">
 
-                View All
+View All Reports
 
-                <i class="fa-solid fa-arrow-right"></i>
+<i class="fa-solid fa-arrow-right"></i>
 
-            </a>
+</a>
 
-        </div>
+</div>
 
+<?php if(mysqli_num_rows($recent_reports)>0){ ?>
 
-        <div class="empty-activity">
+<div class="row g-4">
 
-            <div class="empty-icon">
+<?php while($report=mysqli_fetch_assoc($recent_reports)){ ?>
 
-                <i class="fa-solid fa-folder-open"></i>
+<div class="col-lg-4">
 
-            </div>
+<div class="activity-card">
 
-            <h3>No reports yet</h3>
+<div class="activity-image">
 
-            <p>
+<img
 
-                Your lost and found reports will appear here.
+src="../uploads/<?php echo strtolower($report['type']); ?>_items/<?php echo htmlspecialchars($report['image']); ?>"
 
-            </p>
+onerror="this.src='../assets/images/default-item.png'">
 
-            <a href="report_lost.php" class="btn btn-primary">
+</div>
 
-                Create Your First Report
+<div class="activity-body">
 
-            </a>
+<span class="activity-type <?php echo strtolower($report['type']); ?>">
 
-        </div>
+<?php if($report['type']=="Lost"){ ?>
 
-    </div>
+<i class="fa-solid fa-circle-exclamation"></i>
+
+Lost
+
+<?php }else{ ?>
+
+<i class="fa-solid fa-hand-holding-heart"></i>
+
+Found
+
+<?php } ?>
+
+</span>
+
+<h4>
+
+<?php echo htmlspecialchars($report['item_name']); ?>
+
+</h4>
+
+<p>
+
+<i class="fa-solid fa-location-dot"></i>
+
+<?php echo htmlspecialchars($report['location']); ?>
+
+</p>
+
+<p>
+
+<i class="fa-solid fa-calendar"></i>
+
+<?php echo date("d M Y",strtotime($report['report_date'])); ?>
+
+</p>
+
+<span class="badge bg-secondary">
+
+<?php echo htmlspecialchars($report['status']); ?>
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+<?php } ?>
+
+</div>
+
+<?php }else{ ?>
+
+<div class="empty-activity">
+
+<div class="empty-icon">
+
+<i class="fa-solid fa-folder-open"></i>
+
+</div>
+
+<h3>No reports yet</h3>
+
+<p>
+
+Your lost and found reports will appear here.
+
+</p>
+
+<div class="d-flex gap-3 justify-content-center mt-4">
+
+<a href="report_lost.php" class="btn btn-danger">
+
+Report Lost
+
+</a>
+
+<a href="report_found.php" class="btn btn-success">
+
+Report Found
+
+</a>
+
+</div>
+
+</div>
+
+<?php } ?>
+
+</div>
 
 </section>
-
-
 
 <!-- ==========================
      HELP SECTION

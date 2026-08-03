@@ -163,6 +163,7 @@ Date Found
 type="date"
 class="form-control"
 name="found_date"
+max="<?php echo date('Y-m-d'); ?>"
 required>
 
 </div>

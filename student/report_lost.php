@@ -165,6 +165,7 @@ Date Lost
 type="date"
 class="form-control"
 name="lost_date"
+max="<?php echo date('Y-m-d'); ?>"
 required>
 
 </div>

@@ -19,6 +19,11 @@ $item_name = trim($_POST['item_name']);
 $category = trim($_POST['category']);
 $location = trim($_POST['location']);
 $lost_date = $_POST['lost_date'];
+if (strtotime($lost_date) > time()) {
+
+    die("Future dates are not allowed.");
+
+}
 $description = trim($_POST['description']);
 
 $user_id = $_SESSION['user_id'];
