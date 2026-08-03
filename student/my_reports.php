@@ -126,43 +126,73 @@ class="report-image">
 
 <div class="report-body">
 
-<h5>
+    <div class="report-top">
 
-<?php echo htmlspecialchars($row['item_name']); ?>
+        <div>
 
-</h5>
+            <h5>
 
-<p>
+                <?php echo htmlspecialchars($row['item_name']); ?>
 
-<i class="fa-solid fa-location-dot"></i>
+            </h5>
 
-<?php echo htmlspecialchars($row['location']); ?>
+            <span class="badge bg-danger">
 
-</p>
+                <?php echo htmlspecialchars($row['status']); ?>
 
-<p>
+            </span>
 
-<i class="fa-solid fa-calendar"></i>
+        </div>
 
-<?php echo htmlspecialchars($row['lost_date']); ?>
+        <div class="report-actions">
 
-</p>
+            <a href="edit_lost.php?id=<?php echo $row['id']; ?>"
 
-<span class="badge bg-danger">
+               class="edit-btn"
 
-<?php echo htmlspecialchars($row['status']); ?>
+               title="Edit">
 
-</span>
+                <i class="fa-solid fa-pen"></i>
 
-<a
+            </a>
 
-href="#"
+            <a href="../delete_lost.php?id=<?php echo $row['id']; ?>"
 
-class="btn btn-outline-danger btn-sm w-100 mt-3">
+               class="delete-btn"
 
-View
+               onclick="return confirm('Delete this report?');"
 
-</a>
+               title="Delete">
+
+                <i class="fa-solid fa-trash"></i>
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <p>
+
+        <i class="fa-solid fa-location-dot"></i>
+
+        <?php echo htmlspecialchars($row['location']); ?>
+
+    </p>
+
+    <p>
+
+        <i class="fa-solid fa-calendar"></i>
+
+        <?php echo htmlspecialchars($row['lost_date']); ?>
+
+    </p>
+
+    <a href="#" class="btn btn-outline-danger btn-sm w-100">
+
+        View
+
+    </a>
 
 </div>
 
@@ -242,11 +272,46 @@ class="report-image">
 
 <div class="report-body">
 
-<h5>
+<div class="report-top">
 
-<?php echo htmlspecialchars($row['item_name']); ?>
+    <div>
 
-</h5>
+        <h5>
+
+            <?php echo htmlspecialchars($row['item_name']); ?>
+
+        </h5>
+
+        <span class="badge bg-success">
+
+            <?php echo htmlspecialchars($row['status']); ?>
+
+        </span>
+
+    </div>
+
+    <div class="report-actions">
+
+        <a href="edit_found.php?id=<?php echo $row['id']; ?>"
+           class="edit-btn"
+           title="Edit">
+
+            <i class="fa-solid fa-pen"></i>
+
+        </a>
+
+        <a href="../delete_found.php?id=<?php echo $row['id']; ?>"
+           class="delete-btn"
+           title="Delete"
+           onclick="return confirm('Delete this report?');">
+
+            <i class="fa-solid fa-trash"></i>
+
+        </a>
+
+    </div>
+
+</div>
 
 <p>
 
@@ -264,24 +329,13 @@ class="report-image">
 
 </p>
 
-<span class="badge bg-success">
-
-<?php echo htmlspecialchars($row['status']); ?>
-
-</span>
-
-<a
-
-href="#"
-
-class="btn btn-outline-success btn-sm w-100 mt-3">
+<a href="#" class="btn btn-outline-success btn-sm w-100">
 
 View
 
 </a>
 
 </div>
-
 </div>
 
 </div>

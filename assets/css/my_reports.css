@@ -239,3 +239,98 @@
 }
 
 }
+
+/* ==========================
+   REPORT HEADER
+========================== */
+
+.report-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    margin-bottom:18px;
+
+}
+
+.report-top h5{
+
+    margin:0 0 8px;
+
+    font-weight:700;
+
+}
+
+/* ==========================
+   ACTION ICONS
+========================== */
+
+.report-actions{
+
+    display:flex;
+
+    gap:8px;
+
+}
+
+.edit-btn,
+.delete-btn{
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-decoration:none;
+
+    transition:.25s ease;
+
+    font-size:15px;
+
+}
+
+.edit-btn{
+
+    background:#eef4ff;
+
+    color:#2563eb;
+
+}
+
+.edit-btn:hover{
+
+    background:#bbc6df;
+
+    color:#fff;
+
+    transform:translateY(-2px);
+
+}
+
+.delete-btn{
+
+    background:#fee2e2;
+
+    color:#dc2626;
+
+}
+
+.delete-btn:hover{
+
+    background:#dc2626;
+
+    color:#fff;
+
+    transform:translateY(-2px);
+
+}
