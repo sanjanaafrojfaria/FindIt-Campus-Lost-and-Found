@@ -31,6 +31,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="dashboard.php">Dashboard</a>
                 </li>
+                <li class="nav-item">
+    <a class="nav-link" href="../student/search.php">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        Search
+    </a>
+</li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="report_lost.php">Report Lost</a>

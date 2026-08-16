@@ -650,9 +650,9 @@ Report Found
 
             </div>
 
-            <a href="../index.php#found-items" class="btn browse-found-btn">
+           <a href="search.php" class="btn browse-found-btn">
     <i class="fa-solid fa-magnifying-glass"></i>
-    Browse Found Items
+    Browse Lost/Found Items
 </a>
 
         </div>
