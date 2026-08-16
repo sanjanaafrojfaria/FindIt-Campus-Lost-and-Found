@@ -138,6 +138,18 @@ switch ($action) {
     $buttonLink = "student/report_found.php";
 
     break;
+    case "invalid_university":
+
+        $icon = "fa-building-circle-xmark";
+        $color = "#ef4444";
+        $title = "Invalid University";
+        $message = "Please select a valid university from the registration form.";
+        $buttonText = "Back to Registration";
+        $buttonLink = "register.php";
+
+    break;
+
+
 
 }
 ?>

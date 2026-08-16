@@ -12,6 +12,31 @@ if (!isset($_SESSION['user_id'])) {
 include "../config/database.php";
 
 $user_id = $_SESSION['user_id'];
+
+
+/* ==========================
+   GET UNIVERSITY
+========================== */
+
+$stmt = $conn->prepare("
+    SELECT u.name AS university_name
+    FROM users us
+    LEFT JOIN universities u
+        ON us.university_ref_id = u.id
+    WHERE us.id = ?
+");
+
+$stmt->bind_param("i", $user_id);
+
+$stmt->execute();
+
+$result = $stmt->get_result();
+
+$user_data = $result->fetch_assoc();
+
+$university_name = $user_data['university_name'] ?? 'University not selected';
+
+$stmt->close();
 $stmt = $conn->prepare("
     SELECT COUNT(*) AS total
     FROM lost_items
@@ -196,13 +221,20 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
             </span>
             👋
         </h1>
+        <div class="university-label">
+
+    <i class="fa-solid fa-building-columns"></i>
+
+    <?php echo htmlspecialchars($university_name); ?>
+
+</div>
 
         <p>
             Keep track of your lost and found items,
             manage your reports, and help reunite
             belongings with their owners.
         </p>
-
+        
         <div class="dashboard-hero-buttons">
 
     <a href="my_reports.php" class="btn btn-primary">

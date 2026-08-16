@@ -1248,4 +1248,34 @@
     color:#16a34a;
 
 }
+.university-label {
 
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-top: 8px;
+
+    padding: 9px 16px;
+
+    border-radius: 30px;
+
+    background: rgba(37, 99, 235, 0.08);
+
+    border: 1px solid rgba(37, 99, 235, 0.15);
+
+    color: #020714;
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+}
+
+.university-label i {
+
+    font-size: 15px;
+
+}

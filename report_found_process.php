@@ -1,8 +1,14 @@
+
 <?php
 
 session_start();
 
 include "config/database.php";
+
+
+/* ===========================
+   CHECK LOGIN
+=========================== */
 
 if (!isset($_SESSION['user_id'])) {
 
@@ -11,6 +17,7 @@ if (!isset($_SESSION['user_id'])) {
 
 }
 
+
 if ($_SERVER["REQUEST_METHOD"] != "POST") {
 
     header("Location: student/report_found.php");
@@ -18,17 +25,57 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
 
 }
 
+
 $user_id = $_SESSION['user_id'];
 
-$item_name = trim($_POST['item_name']);
-$category = trim($_POST['category']);
-$location = trim($_POST['location']);
-$found_date = $_POST['found_date'];
-if (strtotime($found_date) > time()) {
 
-    die("Future dates are not allowed.");
+/* ===========================
+   GET USER'S UNIVERSITY
+=========================== */
+
+$sql = "SELECT university_ref_id
+        FROM users
+        WHERE id = ?";
+
+$stmt = mysqli_prepare($conn, $sql);
+
+mysqli_stmt_bind_param(
+    $stmt,
+    "i",
+    $user_id
+);
+
+mysqli_stmt_execute($stmt);
+
+$result = mysqli_stmt_get_result($stmt);
+
+$user = mysqli_fetch_assoc($result);
+
+mysqli_stmt_close($stmt);
+
+
+if (!$user || empty($user['university_ref_id'])) {
+
+    header("Location: message.php?action=invalid_university");
+    exit();
 
 }
+
+$university_ref_id = $user['university_ref_id'];
+
+
+/* ===========================
+   GET FORM DATA
+=========================== */
+
+$item_name = trim($_POST['item_name']);
+
+$category = trim($_POST['category']);
+
+$location = trim($_POST['location']);
+
+$found_date = $_POST['found_date'];
+
 $description = trim($_POST['description']);
 
 $image_name = "default-item.png";
@@ -53,10 +100,25 @@ if (
 
 
 /* ===========================
+   CHECK FUTURE DATE
+=========================== */
+
+if (strtotime($found_date) > time()) {
+
+    header("Location: message.php?action=invalid_date");
+    exit();
+
+}
+
+
+/* ===========================
    IMAGE UPLOAD
 =========================== */
 
-if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+if (
+    isset($_FILES['image']) &&
+    $_FILES['image']['error'] == 0
+) {
 
     $upload_dir = "uploads/found_items/";
 
@@ -121,6 +183,7 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
 $sql = "INSERT INTO found_items
 (
     user_id,
+    university_ref_id,
     item_name,
     category,
     location,
@@ -128,7 +191,7 @@ $sql = "INSERT INTO found_items
     description,
     image
 )
-VALUES (?, ?, ?, ?, ?, ?, ?)";
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 
 $stmt = mysqli_prepare($conn, $sql);
@@ -136,8 +199,9 @@ $stmt = mysqli_prepare($conn, $sql);
 
 mysqli_stmt_bind_param(
     $stmt,
-    "issssss",
+    "iissssss",
     $user_id,
+    $university_ref_id,
     $item_name,
     $category,
     $location,
@@ -166,3 +230,4 @@ if (mysqli_stmt_execute($stmt)) {
 }
 
 ?>
+

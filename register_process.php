@@ -1,7 +1,15 @@
+
 <?php
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
 include 'config/database.php';
+
+
+/* ===========================
+   CHECK REQUEST
+=========================== */
 
 if ($_SERVER["REQUEST_METHOD"] != "POST") {
 
@@ -10,18 +18,26 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
 
 }
 
+
 /* ===========================
    GET FORM DATA
 =========================== */
 
 $full_name = trim($_POST['full_name']);
-$university_id = trim($_POST['university_id']);
-$email = trim($_POST['email']);
-$phone = trim($_POST['phone']);
-$department = trim($_POST['department']);
-$password = $_POST['password'];
-$confirm_password = $_POST['confirm_password'];
 
+$university_id = trim($_POST['university_id']);
+
+$university_ref_id = $_POST['university_ref_id'] ?? '';
+
+$email = trim($_POST['email']);
+
+$phone = trim($_POST['phone']);
+
+$department = trim($_POST['department']);
+
+$password = $_POST['password'];
+
+$confirm_password = $_POST['confirm_password'];
 
 
 /* ===========================
@@ -31,6 +47,7 @@ $confirm_password = $_POST['confirm_password'];
 if (
     empty($full_name) ||
     empty($university_id) ||
+    empty($university_ref_id) ||
     empty($email) ||
     empty($phone) ||
     empty($department) ||
@@ -43,6 +60,11 @@ if (
 
 }
 
+
+/* ===========================
+   VALIDATE EMAIL
+=========================== */
+
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
     header("Location: message.php?action=invalid_email");
@@ -50,12 +72,49 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 }
 
+
+/* ===========================
+   CHECK PASSWORDS
+=========================== */
+
 if ($password !== $confirm_password) {
 
     header("Location: message.php?action=password_mismatch");
     exit();
 
 }
+
+
+/* ===========================
+   CHECK UNIVERSITY
+=========================== */
+
+$sql = "SELECT id FROM universities WHERE id = ?";
+
+$stmt = mysqli_prepare($conn, $sql);
+
+mysqli_stmt_bind_param(
+    $stmt,
+    "i",
+    $university_ref_id
+);
+
+mysqli_stmt_execute($stmt);
+
+mysqli_stmt_store_result($stmt);
+
+if (mysqli_stmt_num_rows($stmt) == 0) {
+
+    mysqli_stmt_close($stmt);
+
+    header("Location: message.php?action=invalid_university");
+    exit();
+
+}
+
+mysqli_stmt_close($stmt);
+
+
 /* ===========================
    CHECK DUPLICATE EMAIL
 =========================== */
@@ -64,7 +123,11 @@ $sql = "SELECT id FROM users WHERE email = ?";
 
 $stmt = mysqli_prepare($conn, $sql);
 
-mysqli_stmt_bind_param($stmt, "s", $email);
+mysqli_stmt_bind_param(
+    $stmt,
+    "s",
+    $email
+);
 
 mysqli_stmt_execute($stmt);
 
@@ -80,6 +143,8 @@ if (mysqli_stmt_num_rows($stmt) > 0) {
 }
 
 mysqli_stmt_close($stmt);
+
+
 /* ===========================
    CHECK DUPLICATE UNIVERSITY ID
 =========================== */
@@ -88,7 +153,11 @@ $sql = "SELECT id FROM users WHERE university_id = ?";
 
 $stmt = mysqli_prepare($conn, $sql);
 
-mysqli_stmt_bind_param($stmt, "s", $university_id);
+mysqli_stmt_bind_param(
+    $stmt,
+    "s",
+    $university_id
+);
 
 mysqli_stmt_execute($stmt);
 
@@ -104,35 +173,61 @@ if (mysqli_stmt_num_rows($stmt) > 0) {
 }
 
 mysqli_stmt_close($stmt);
+
+
 /* ===========================
    HASH PASSWORD
 =========================== */
 
-$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+$hashed_password = password_hash(
+    $password,
+    PASSWORD_DEFAULT
+);
+
+
 /* ===========================
    INSERT USER
 =========================== */
 
 $sql = "INSERT INTO users
-(full_name, university_id, email, phone, department, password)
-VALUES (?, ?, ?, ?, ?, ?)";
+(
+    full_name,
+    university_id,
+    university_ref_id,
+    email,
+    phone,
+    department,
+    password
+)
+VALUES (?, ?, ?, ?, ?, ?, ?)";
+
 
 $stmt = mysqli_prepare($conn, $sql);
 
+
 mysqli_stmt_bind_param(
     $stmt,
-    "ssssss",
+    "ssissss",
     $full_name,
     $university_id,
+    $university_ref_id,
     $email,
     $phone,
     $department,
     $hashed_password
 );
 
+
+/* ===========================
+   EXECUTE INSERT
+=========================== */
+
 if (mysqli_stmt_execute($stmt)) {
 
+    mysqli_stmt_close($stmt);
+
     header("Location: message.php?action=register_success");
+
     exit();
 
 } else {
@@ -140,7 +235,6 @@ if (mysqli_stmt_execute($stmt)) {
     echo "Database Error: " . mysqli_error($conn);
 
 }
-header("Location: message.php?action=register_success");
-exit();
 
 ?>
+

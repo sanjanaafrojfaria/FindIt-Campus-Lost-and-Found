@@ -29,137 +29,210 @@ include 'config/database.php';
 
     <div class="register-card">
 
-        
+    <h2>Create Account</h2>
 
-        <h2>Create Account</h2>
+    <p class="subtitle">
+        Join FindIt and help reconnect lost belongings with their rightful owners.
+    </p>
 
-        <p class="subtitle">
-
-            Join FindIt and help reconnect lost belongings with their rightful owners.
-
-        </p>
-        <form action="register_process.php"
-      method="POST"
-      enctype="multipart/form-data">
+    <form action="register_process.php"
+          method="POST"
+          enctype="multipart/form-data">
 
         <div class="row">
 
-    <div class="col-md-6 mb-3">
-        <label>Full Name</label>
-        <input type="text"
-               class="form-control"
-               name="full_name"
-               placeholder="Enter your full name"
-               required>
-    </div>
+            <!-- FULL NAME -->
+            <div class="col-md-6 mb-3">
 
-    <div class="col-md-6 mb-3">
-        <label>University ID</label>
-        <input type="text"
-               class="form-control"
-               name="university_id"
-               placeholder="e.g. 221-35-xxxx"
-               required>
-    </div>
+                <label>Full Name</label>
 
-    <div class="col-md-6 mb-3">
-        <label>Email</label>
-        <input type="email"
-               class="form-control"
-               name="email"
-               placeholder="Enter your email"
-               required>
-    </div>
+                <input type="text"
+                       class="form-control"
+                       name="full_name"
+                       placeholder="Enter your full name"
+                       required>
 
-    <div class="col-md-6 mb-3">
-        <label>Phone Number</label>
-        <input type="text"
-               class="form-control"
-               name="phone"
-               placeholder="01XXXXXXXXX"
-               required>
-    </div>
+            </div>
 
-    <div class="col-md-6 mb-3">
-        <label>Department</label>
 
-        <select class="form-select"
-                name="department"
-                required>
+            <!-- UNIVERSITY -->
+            <div class="col-md-6 mb-3">
 
-            <option value="">Select Department</option>
+                <label>University</label>
 
-            <option>CSE</option>
-            <option>EEE</option>
-            <option>CE</option>
-            <option>Business Administration</option>
-            <option>English</option>
-            <option>Law</option>
-            <option>Pharmacy</option>
-            <option>Architecture</option>
-            <option>Other</option>
+                <select class="form-select"
+                        name="university_ref_id"
+                        required>
 
-        </select>
+                    <option value="">Select University</option>
 
-    </div>
+                    <?php
 
-    <div class="col-md-6 mb-3">
+                    include "config/database.php";
 
-        <label>Profile Picture</label>
+                    $universityQuery = mysqli_query(
+                        $conn,
+                        "SELECT id, name
+                         FROM universities
+                         ORDER BY name ASC"
+                    );
 
-        <input type="file"
-               class="form-control"
-               name="profile_image"
-               accept=".jpg,.jpeg,.png">
+                    while ($university = mysqli_fetch_assoc($universityQuery)) {
 
-    </div>
+                    ?>
 
-    <div class="col-md-6 mb-3">
+                        <option value="<?php echo $university['id']; ?>">
 
-        <label>Password</label>
+                            <?php echo htmlspecialchars($university['name']); ?>
 
-        <input type="password"
-               class="form-control"
-               name="password"
-               placeholder="Create password"
-               required>
+                        </option>
 
-    </div>
+                    <?php
 
-    <div class="col-md-6 mb-4">
+                    }
 
-        <label>Confirm Password</label>
+                    ?>
 
-        <input type="password"
-               class="form-control"
-               name="confirm_password"
-               placeholder="Confirm password"
-               required>
+                </select>
 
-    </div>
+            </div>
 
-</div>
 
-<div class="d-grid">
+            <!-- UNIVERSITY ID -->
+            <div class="col-md-6 mb-3">
 
-    <button class="btn btn-primary btn-lg">
+                <label>University ID</label>
 
-        Create Account
+                <input type="text"
+                       class="form-control"
+                       name="university_id"
+                       placeholder="e.g. 221-35-xxxx"
+                       required>
 
-    </button>
+            </div>
 
-</div>
 
-        <div class="login-link">
+            <!-- EMAIL -->
+            <div class="col-md-6 mb-3">
 
-            Already have an account?
+                <label>Email</label>
 
-            <a href="login.php">Sign In</a>
+                <input type="email"
+                       class="form-control"
+                       name="email"
+                       placeholder="Enter your email"
+                       required>
+
+            </div>
+
+
+            <!-- PHONE -->
+            <div class="col-md-6 mb-3">
+
+                <label>Phone Number</label>
+
+                <input type="text"
+                       class="form-control"
+                       name="phone"
+                       placeholder="01XXXXXXXXX"
+                       required>
+
+            </div>
+
+
+            <!-- DEPARTMENT -->
+            <div class="col-md-6 mb-3">
+
+                <label>Department</label>
+
+                <select class="form-select"
+                        name="department"
+                        required>
+
+                    <option value="">Select Department</option>
+
+                    <option>CSE</option>
+                    <option>EEE</option>
+                    <option>CE</option>
+                    <option>Business Administration</option>
+                    <option>English</option>
+                    <option>Law</option>
+                    <option>Pharmacy</option>
+                    <option>Architecture</option>
+                    <option>Other</option>
+
+                </select>
+
+            </div>
+
+
+            <!-- PROFILE PICTURE -->
+            <div class="col-md-6 mb-3">
+
+                <label>Profile Picture</label>
+
+                <input type="file"
+                       class="form-control"
+                       name="profile_image"
+                       accept=".jpg,.jpeg,.png">
+
+            </div>
+
+
+            <!-- PASSWORD -->
+            <div class="col-md-6 mb-3">
+
+                <label>Password</label>
+
+                <input type="password"
+                       class="form-control"
+                       name="password"
+                       placeholder="Create password"
+                       required>
+
+            </div>
+
+
+            <!-- CONFIRM PASSWORD -->
+            <div class="col-md-6 mb-4">
+
+                <label>Confirm Password</label>
+
+                <input type="password"
+                       class="form-control"
+                       name="confirm_password"
+                       placeholder="Confirm password"
+                       required>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+            <div class="col-12">
+
+                <button type="submit"
+                        class="btn btn-primary btn-lg">
+
+                    Create Account
+
+                </button>
+
+            </div>
 
         </div>
-        </form>
+
+    </form>
+
+
+    <div class="login-link">
+
+        Already have an account?
+
+        <a href="login.php">Sign In</a>
 
     </div>
+
+</div>
 
 </div>
 
