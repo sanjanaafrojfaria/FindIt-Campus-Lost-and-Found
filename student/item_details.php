@@ -558,15 +558,45 @@ echo nl2br(
 
 <div class="mt-4">
 
-<a
-href="search.php"
-class="btn btn-outline-primary back-btn">
+<div class="mt-4 d-flex gap-2 flex-wrap">
 
-<i class="fa-solid fa-arrow-left"></i>
+    <?php if (
+        $item_type === "Found" &&
+        $item['status'] === "Available"
+    ) { ?>
 
-Back to Search
+        <?php
+        // Check if the logged-in student is the person
+        // who reported this found item.
 
-</a>
+        if ($item['user_id'] != $user_id) {
+        ?>
+
+            <a
+                href="claim_item.php?id=<?php echo $item_id; ?>&type=Found"
+                class="btn btn-success back-btn">
+
+                <i class="fa-solid fa-hand-holding-heart"></i>
+
+                Claim This Item
+
+            </a>
+
+        <?php } ?>
+
+    <?php } ?>
+
+    <a
+        href="search.php"
+        class="btn btn-outline-primary back-btn">
+
+        <i class="fa-solid fa-arrow-left"></i>
+
+        Back to Search
+
+    </a>
+
+</div>
 
 </div>
 
