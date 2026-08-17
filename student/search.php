@@ -973,14 +973,15 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
                             </span>
 
 
-                            <a
-                                href="#"
-                                class="btn btn-outline-primary view-btn">
+                           <a
+    href="item_details.php?id=<?php echo $item['id']; ?>&type=<?php echo $item['item_type']; ?>"
+    class="btn btn-outline-primary view-btn">
 
-                                View Details
+    <i class="fa-solid fa-eye"></i>
 
-                            </a>
+    View Details
 
+</a>
 
                         </div>
 
