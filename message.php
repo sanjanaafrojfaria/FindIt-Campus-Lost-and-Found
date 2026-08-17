@@ -266,7 +266,40 @@ case "claim_failed":
     $buttonLink = "student/search.php";
 
     break;
+case "claim_approved":
 
+    $icon = "fa-circle-check";
+    $color = "#10b981";
+    $title = "Claim Approved!";
+    $message = "The claim has been approved successfully. The found item has now been marked as claimed.";
+    $buttonText = "Back to Claims";
+    $buttonLink = "admin/claims.php";
+
+    break;
+
+
+case "claim_rejected":
+
+    $icon = "fa-circle-xmark";
+    $color = "#ef4444";
+    $title = "Claim Rejected";
+    $message = "The claim has been rejected successfully.";
+    $buttonText = "Back to Claims";
+    $buttonLink = "admin/claims.php";
+
+    break;
+
+
+case "claim_action_failed":
+
+    $icon = "fa-circle-exclamation";
+    $color = "#ef4444";
+    $title = "Action Failed";
+    $message = "The claim could not be processed. It may have already been processed or the associated item may no longer be available.";
+    $buttonText = "Back to Claims";
+    $buttonLink = "admin/claims.php";
+
+    break;
 
 
 }

@@ -1,12 +1,16 @@
 <?php
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
 ?>
 
 <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
 
     <div class="container">
+
+        <!-- LOGO -->
 
         <a class="navbar-brand logo" href="../index.php">
 
@@ -21,39 +25,110 @@ if (session_status() === PHP_SESSION_NONE) {
 
         </a>
 
-        <button class="navbar-toggler text-white"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
+
+        <!-- MOBILE MENU BUTTON -->
+
+        <button
+            class="navbar-toggler text-white"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
 
             <i class="fa-solid fa-bars"></i>
 
         </button>
 
+
+        <!-- NAVIGATION -->
+
         <div class="collapse navbar-collapse" id="navbarNav">
 
             <ul class="navbar-nav ms-auto align-items-center">
 
-                <li class="nav-item">
-                    <a class="nav-link" href="dashboard.php">Dashboard</a>
-                </li>
+
+                <!-- DASHBOARD -->
 
                 <li class="nav-item">
-                    <a class="nav-link" href="users.php">Users</a>
+
+                    <a
+                        class="nav-link"
+                        href="dashboard.php">
+
+                        Dashboard
+
+                    </a>
+
                 </li>
 
+
+                <!-- USERS -->
+
                 <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="users.php">
+
+                        Users
+
+                    </a>
+
+                </li>
+
+
+                <!-- MANAGE CLAIMS -->
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="claims.php">
+
+                        Manage Claims
+
+                    </a>
+
+                </li>
+
+
+                <!-- ADMIN NAME -->
+
+                <li class="nav-item">
+
                     <span class="nav-link">
+
                         <i class="fa-solid fa-user-shield"></i>
-                        <?php echo htmlspecialchars($_SESSION['full_name']); ?>
+
+                        <?php
+
+                        echo htmlspecialchars(
+                            $_SESSION['full_name'] ?? 'Admin'
+                        );
+
+                        ?>
+
                     </span>
+
                 </li>
+
+
+                <!-- LOGOUT -->
 
                 <li class="nav-item ms-lg-3">
-                    <a href="../logout.php" class="btn btn-login">
+
+                    <a
+                        href="../logout.php"
+                        class="btn btn-login">
+
                         Logout
+
                     </a>
+
                 </li>
+
 
             </ul>
 

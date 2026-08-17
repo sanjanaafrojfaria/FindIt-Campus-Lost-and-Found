@@ -156,17 +156,12 @@ body {
 }
 
 .claim-card {
-
     background: white;
-
     border-radius: 20px;
-
     overflow: hidden;
-
     box-shadow: 0 10px 35px rgba(0,0,0,.08);
-
-    margin-bottom: 25px;
-
+    margin: 0 auto 25px;
+    max-width: 950px;
 }
 
 .claim-header {
@@ -330,6 +325,10 @@ body {
 
     margin-bottom: 20px;
 
+}
+.claims-section .page-title,
+.claims-section .page-subtitle {
+    text-align: center;
 }
 
 </style>
