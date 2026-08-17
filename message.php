@@ -148,6 +148,124 @@ switch ($action) {
         $buttonLink = "register.php";
 
     break;
+    case "claim_success":
+
+    $icon = "fa-circle-check";
+    $color = "#10b981";
+    $title = "Claim Submitted!";
+    $message = "Your claim has been submitted successfully. An administrator will review your claim and verify the ownership information.";
+    $buttonText = "Go to Dashboard";
+    $buttonLink = "student/dashboard.php";
+
+    break;
+
+
+case "claim_invalid":
+
+    $icon = "fa-circle-exclamation";
+    $color = "#f59e0b";
+    $title = "Invalid Claim";
+    $message = "Please provide all required claim information.";
+    $buttonText = "Back to Search";
+    $buttonLink = "student/search.php";
+
+    break;
+
+
+case "claim_exists":
+
+    $icon = "fa-circle-info";
+    $color = "#2563eb";
+    $title = "Claim Already Submitted";
+    $message = "You have already submitted a claim for this item.";
+    $buttonText = "Back to Search";
+    $buttonLink = "student/search.php";
+
+    break;
+
+
+case "item_not_found":
+
+    $icon = "fa-circle-xmark";
+    $color = "#ef4444";
+    $title = "Item Not Found";
+    $message = "The requested found item could not be found in your university.";
+    $buttonText = "Back to Search";
+    $buttonLink = "student/search.php";
+
+    break;
+
+
+case "own_item":
+
+    $icon = "fa-ban";
+    $color = "#ef4444";
+    $title = "Cannot Claim This Item";
+    $message = "You cannot claim an item that you reported as found.";
+    $buttonText = "Back to Search";
+    $buttonLink = "student/search.php";
+
+    break;
+
+
+case "item_unavailable":
+
+    $icon = "fa-circle-info";
+    $color = "#f59e0b";
+    $title = "Item Unavailable";
+    $message = "This item is no longer available for claiming.";
+    $buttonText = "Back to Search";
+    $buttonLink = "student/search.php";
+
+    break;
+
+
+case "invalid_proof":
+
+    $icon = "fa-file-image";
+    $color = "#ef4444";
+    $title = "Invalid Proof Image";
+    $message = "Please upload a JPG, JPEG, or PNG image.";
+    $buttonText = "Try Again";
+    $buttonLink = "javascript:history.back()";
+
+    break;
+
+
+case "proof_too_large":
+
+    $icon = "fa-file-circle-xmark";
+    $color = "#ef4444";
+    $title = "Image Too Large";
+    $message = "The proof image must be smaller than 5 MB.";
+    $buttonText = "Try Again";
+    $buttonLink = "javascript:history.back()";
+
+    break;
+
+
+case "proof_upload_failed":
+
+    $icon = "fa-upload";
+    $color = "#ef4444";
+    $title = "Upload Failed";
+    $message = "The proof image could not be uploaded. Please try again.";
+    $buttonText = "Try Again";
+    $buttonLink = "javascript:history.back()";
+
+    break;
+
+
+case "claim_failed":
+
+    $icon = "fa-circle-xmark";
+    $color = "#ef4444";
+    $title = "Claim Failed";
+    $message = "Something went wrong while submitting your claim. Please try again.";
+    $buttonText = "Try Again";
+    $buttonLink = "student/search.php";
+
+    break;
 
 
 
