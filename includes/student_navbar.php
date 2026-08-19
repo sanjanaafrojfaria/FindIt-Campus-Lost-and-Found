@@ -62,14 +62,19 @@
                 </li>
 
                 <li class="nav-item ms-lg-3">
-                    <span class="nav-link">
-                        <i class="fa-solid fa-user"></i>
-                        <?php
-                        $name = explode(" ", $_SESSION['full_name']);
-                        echo htmlspecialchars($name[0]);
-                        ?>
-                    </span>
-                </li>
+
+    <a class="nav-link" href="profile.php">
+
+        <i class="fa-solid fa-user"></i>
+
+        <?php
+        $name = explode(" ", $_SESSION['full_name']);
+        echo htmlspecialchars($name[0]);
+        ?>
+
+    </a>
+
+</li>
 
                 <li class="nav-item ms-lg-2">
                     <a href="../logout.php" class="btn btn-login">

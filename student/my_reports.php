@@ -13,27 +13,31 @@ include "../config/database.php";
 
 $user_id = $_SESSION['user_id'];
 
+
 /* ===========================
    GET LOST REPORTS
 =========================== */
 
-$lostQuery = mysqli_query($conn,
+$lostQuery = mysqli_query(
+    $conn,
+    "SELECT *
+     FROM lost_items
+     WHERE user_id='$user_id'
+     ORDER BY created_at DESC"
+);
 
-"SELECT *
-FROM lost_items
-WHERE user_id='$user_id'
-ORDER BY created_at DESC");
 
 /* ===========================
    GET FOUND REPORTS
 =========================== */
 
-$foundQuery = mysqli_query($conn,
-
-"SELECT *
-FROM found_items
-WHERE user_id='$user_id'
-ORDER BY created_at DESC");
+$foundQuery = mysqli_query(
+    $conn,
+    "SELECT *
+     FROM found_items
+     WHERE user_id='$user_id'
+     ORDER BY created_at DESC"
+);
 
 ?>
 
@@ -46,27 +50,38 @@ ORDER BY created_at DESC");
 <meta charset="UTF-8">
 
 <meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+      content="width=device-width, initial-scale=1.0">
 
 <title>My Reports | FindIt</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-rel="stylesheet">
+<link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet">
 
-<link rel="stylesheet"
-href="../assets/css/style.css">
+<link
+    rel="stylesheet"
+    href="../assets/css/style.css">
 
-<link rel="stylesheet"
-href="../assets/css/my_reports.css">
+<link
+    rel="stylesheet"
+    href="../assets/css/my_reports.css">
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 </head>
 
+
 <body>
 
+
 <?php include "../includes/student_navbar.php"; ?>
+
+
+<!-- ===========================
+     PAGE HEADER
+=========================== -->
 
 <section class="reports-header">
 
@@ -90,9 +105,14 @@ View all of your Lost and Found reports in one place.
 
 </section>
 
+
+
 <div class="container py-5">
 
-<!-- LOST REPORTS -->
+
+<!-- ===========================
+     LOST REPORTS
+=========================== -->
 
 <h3 class="section-title text-danger">
 
@@ -102,111 +122,143 @@ Lost Reports
 
 </h3>
 
+
 <div class="row g-4 mb-5">
+
 
 <?php
 
-if(mysqli_num_rows($lostQuery)>0){
+if (mysqli_num_rows($lostQuery) > 0) {
 
-while($row=mysqli_fetch_assoc($lostQuery)){
+    while ($row = mysqli_fetch_assoc($lostQuery)) {
 
 ?>
+
 
 <div class="col-lg-4 col-md-6">
 
 <div class="report-card">
 
+
+<!-- IMAGE -->
+
 <img
+    src="../uploads/lost_items/<?php echo htmlspecialchars($row['image']); ?>"
+    onerror="this.src='../assets/images/default-item.png'"
+    class="report-image"
+>
 
-src="../uploads/lost_items/<?php echo htmlspecialchars($row['image']); ?>"
-
-onerror="this.src='../assets/images/default-item.png'"
-
-class="report-image">
 
 <div class="report-body">
 
-    <div class="report-top">
 
-        <div>
+<!-- TOP SECTION -->
 
-            <h5>
+<div class="report-top">
 
-                <?php echo htmlspecialchars($row['item_name']); ?>
+<div>
 
-            </h5>
+<h5>
 
-            <span class="badge bg-danger">
+<?php echo htmlspecialchars($row['item_name']); ?>
 
-                <?php echo htmlspecialchars($row['status']); ?>
+</h5>
 
-            </span>
 
-        </div>
+<span class="badge bg-danger">
 
-        <div class="report-actions">
+<?php echo htmlspecialchars($row['status']); ?>
 
-            <a href="edit_lost.php?id=<?php echo $row['id']; ?>"
+</span>
 
-               class="edit-btn"
+</div>
 
-               title="Edit">
 
-                <i class="fa-solid fa-pen"></i>
+<!-- ACTION BUTTONS -->
 
-            </a>
+<div class="report-actions">
 
-            <a href="../delete_lost.php?id=<?php echo $row['id']; ?>"
 
-               class="delete-btn"
+<a
+    href="edit_lost.php?id=<?php echo $row['id']; ?>"
+    class="edit-btn"
+    title="Edit"
+>
 
-               onclick="return confirm('Delete this report?');"
+<i class="fa-solid fa-pen"></i>
 
-               title="Delete">
+</a>
 
-                <i class="fa-solid fa-trash"></i>
 
-            </a>
+<a
+    href="../delete_lost.php?id=<?php echo $row['id']; ?>"
+    class="delete-btn"
+    onclick="return confirm('Delete this report?');"
+    title="Delete"
+>
 
-        </div>
+<i class="fa-solid fa-trash"></i>
 
-    </div>
+</a>
 
-    <p>
 
-        <i class="fa-solid fa-location-dot"></i>
+</div>
 
-        <?php echo htmlspecialchars($row['location']); ?>
+</div>
 
-    </p>
 
-    <p>
 
-        <i class="fa-solid fa-calendar"></i>
+<!-- LOCATION -->
 
-        <?php echo htmlspecialchars($row['lost_date']); ?>
+<p>
 
-    </p>
+<i class="fa-solid fa-location-dot"></i>
 
-    <a href="#" class="btn btn-outline-danger btn-sm w-100">
+<?php echo htmlspecialchars($row['location']); ?>
 
-        View
+</p>
 
-    </a>
+
+
+<!-- DATE -->
+
+<p>
+
+<i class="fa-solid fa-calendar"></i>
+
+<?php echo htmlspecialchars($row['lost_date']); ?>
+
+</p>
+
+
+
+<!-- VIEW -->
+
+<a
+    href="item_details.php?id=<?php echo $row['id']; ?>&type=Lost"
+    class="btn btn-outline-danger btn-sm w-100"
+>
+
+View
+
+</a>
+
 
 </div>
 
 </div>
 
 </div>
+
 
 <?php
 
-}
+    }
 
-}else{
+} else {
 
 ?>
+
 
 <div class="col-12">
 
@@ -230,15 +282,21 @@ You haven't reported any lost items.
 
 </div>
 
+
 <?php
 
 }
 
 ?>
 
+
 </div>
 
-<!-- FOUND REPORTS -->
+
+
+<!-- ===========================
+     FOUND REPORTS
+=========================== -->
 
 <h3 class="section-title text-success">
 
@@ -248,70 +306,93 @@ Found Reports
 
 </h3>
 
+
 <div class="row g-4">
+
 
 <?php
 
-if(mysqli_num_rows($foundQuery)>0){
+if (mysqli_num_rows($foundQuery) > 0) {
 
-while($row=mysqli_fetch_assoc($foundQuery)){
+    while ($row = mysqli_fetch_assoc($foundQuery)) {
 
 ?>
+
 
 <div class="col-lg-4 col-md-6">
 
 <div class="report-card">
 
+
+<!-- IMAGE -->
+
 <img
+    src="../uploads/found_items/<?php echo htmlspecialchars($row['image']); ?>"
+    onerror="this.src='../assets/images/default-item.png'"
+    class="report-image"
+>
 
-src="../uploads/found_items/<?php echo htmlspecialchars($row['image']); ?>"
-
-onerror="this.src='../assets/images/default-item.png'"
-
-class="report-image">
 
 <div class="report-body">
 
+
+<!-- TOP SECTION -->
+
 <div class="report-top">
 
-    <div>
+<div>
 
-        <h5>
+<h5>
 
-            <?php echo htmlspecialchars($row['item_name']); ?>
+<?php echo htmlspecialchars($row['item_name']); ?>
 
-        </h5>
+</h5>
 
-        <span class="badge bg-success">
 
-            <?php echo htmlspecialchars($row['status']); ?>
+<span class="badge bg-success">
 
-        </span>
+<?php echo htmlspecialchars($row['status']); ?>
 
-    </div>
-
-    <div class="report-actions">
-
-        <a href="edit_found.php?id=<?php echo $row['id']; ?>"
-           class="edit-btn"
-           title="Edit">
-
-            <i class="fa-solid fa-pen"></i>
-
-        </a>
-
-        <a href="../delete_found.php?id=<?php echo $row['id']; ?>"
-           class="delete-btn"
-           title="Delete"
-           onclick="return confirm('Delete this report?');">
-
-            <i class="fa-solid fa-trash"></i>
-
-        </a>
-
-    </div>
+</span>
 
 </div>
+
+
+<!-- ACTION BUTTONS -->
+
+<div class="report-actions">
+
+
+<a
+    href="edit_found.php?id=<?php echo $row['id']; ?>"
+    class="edit-btn"
+    title="Edit"
+>
+
+<i class="fa-solid fa-pen"></i>
+
+</a>
+
+
+<a
+    href="../delete_found.php?id=<?php echo $row['id']; ?>"
+    class="delete-btn"
+    title="Delete"
+    onclick="return confirm('Delete this report?');"
+>
+
+<i class="fa-solid fa-trash"></i>
+
+</a>
+
+
+</div>
+
+</div>
+
+
+
+<!-- LOCATION -->
 
 <p>
 
@@ -321,6 +402,10 @@ class="report-image">
 
 </p>
 
+
+
+<!-- DATE -->
+
 <p>
 
 <i class="fa-solid fa-calendar"></i>
@@ -329,24 +414,35 @@ class="report-image">
 
 </p>
 
-<a href="#" class="btn btn-outline-success btn-sm w-100">
+
+
+<!-- VIEW -->
+
+<a
+    href="item_details.php?id=<?php echo $row['id']; ?>&type=Found"
+    class="btn btn-outline-success btn-sm w-100"
+>
 
 View
 
 </a>
 
-</div>
+
 </div>
 
 </div>
+
+</div>
+
 
 <?php
 
-}
+    }
 
-}else{
+} else {
 
 ?>
+
 
 <div class="col-12">
 
@@ -370,15 +466,18 @@ You haven't reported any found items.
 
 </div>
 
+
 <?php
 
 }
 
 ?>
 
+
 </div>
 
 </div>
+
 
 </body>
 

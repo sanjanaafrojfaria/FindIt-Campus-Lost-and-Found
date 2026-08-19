@@ -243,3 +243,26 @@ label{
     margin-bottom:22px !important;
 
 }
+html,
+body {
+    min-height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    overflow-y: auto;
+}
+
+.overlay {
+    min-height: 100vh;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 100px 20px 40px;
+}
+
+.register-card {
+    margin: 20px auto;
+    max-height: none;
+}

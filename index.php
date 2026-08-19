@@ -315,6 +315,27 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
                             <?= date("M d, Y", strtotime($item['lost_date'])) ?>
 
                         </small>
+                        <?php if (isset($_SESSION['user_id'])) { ?>
+
+    <a
+        href="student/item_details.php?id=<?= $item['id'] ?>&type=Lost"
+        class="btn btn-outline-primary w-100 mt-3">
+
+        View Details
+
+    </a>
+
+<?php } else { ?>
+
+    <a
+        href="login.php"
+        class="btn btn-outline-primary w-100 mt-3">
+
+        View Details
+
+    </a>
+
+<?php } ?>
 
                     </div>
 
@@ -444,6 +465,27 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
                             <?= date("M d, Y", strtotime($item['found_date'])) ?>
 
                         </small>
+                        <?php if (isset($_SESSION['user_id'])) { ?>
+
+    <a
+        href="student/item_details.php?id=<?= $item['id'] ?>&type=Found"
+        class="btn btn-outline-primary w-100 mt-3">
+
+        View Details
+
+    </a>
+
+<?php } else { ?>
+
+    <a
+        href="login.php"
+        class="btn btn-outline-primary w-100 mt-3">
+
+        View Details
+
+    </a>
+
+<?php } ?>
 
                     </div>
 

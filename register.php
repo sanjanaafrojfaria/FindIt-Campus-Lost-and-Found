@@ -1,6 +1,6 @@
 <?php
 include 'config/database.php';
- include 'includes/navbar.php'; 
+include 'includes/navbar.php';
 ?>
 
 <!DOCTYPE html>
@@ -14,12 +14,21 @@ include 'config/database.php';
 
     <title>Register | FindIt</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <link rel="stylesheet" href="assets/css/register.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Main CSS -->
+    <link rel="stylesheet"
+          href="assets/css/style.css">
+
+    <!-- Register CSS -->
+    <link rel="stylesheet"
+          href="assets/css/register.css">
 
 </head>
 
@@ -29,212 +38,262 @@ include 'config/database.php';
 
     <div class="register-card">
 
-    <h2>Create Account</h2>
+        <h2>Create Account</h2>
 
-    <p class="subtitle">
-        Join FindIt and help reconnect lost belongings with their rightful owners.
-    </p>
-
-    <form action="register_process.php"
-          method="POST"
-          enctype="multipart/form-data">
-
-        <div class="row">
-
-            <!-- FULL NAME -->
-            <div class="col-md-6 mb-3">
-
-                <label>Full Name</label>
-
-                <input type="text"
-                       class="form-control"
-                       name="full_name"
-                       placeholder="Enter your full name"
-                       required>
-
-            </div>
+        <p class="subtitle">
+            Join FindIt and help reconnect lost belongings with their rightful owners.
+        </p>
 
 
-            <!-- UNIVERSITY -->
-            <div class="col-md-6 mb-3">
+        <form action="register_process.php"
+              method="POST"
+              enctype="multipart/form-data">
 
-                <label>University</label>
 
-                <select class="form-select"
-                        name="university_ref_id"
-                        required>
+            <!-- ==========================
+                 FULL NAME + UNIVERSITY
+            =========================== -->
 
-                    <option value="">Select University</option>
+            <div class="row">
 
-                    <?php
+                <!-- FULL NAME -->
+                <div class="col-md-6 mb-3">
 
-                    include "config/database.php";
+                    <label for="full_name">Full Name</label>
 
-                    $universityQuery = mysqli_query(
-                        $conn,
-                        "SELECT id, name
-                         FROM universities
-                         ORDER BY name ASC"
-                    );
+                    <input type="text"
+                           id="full_name"
+                           class="form-control"
+                           name="full_name"
+                           placeholder="Enter your full name"
+                           required>
 
-                    while ($university = mysqli_fetch_assoc($universityQuery)) {
+                </div>
 
-                    ?>
 
-                        <option value="<?php echo $university['id']; ?>">
+                <!-- UNIVERSITY -->
+                <div class="col-md-6 mb-3">
 
-                            <?php echo htmlspecialchars($university['name']); ?>
+                    <label for="university">University</label>
 
+                    <select class="form-select"
+                            id="university"
+                            name="university_ref_id"
+                            required>
+
+                        <option value="">Select University</option>
+
+                        <?php
+
+                        $universityQuery = mysqli_query(
+                            $conn,
+                            "SELECT id, name
+                             FROM universities
+                             ORDER BY name ASC"
+                        );
+
+                        while ($university = mysqli_fetch_assoc($universityQuery)) {
+
+                        ?>
+
+                            <option value="<?php echo $university['id']; ?>">
+
+                                <?php echo htmlspecialchars($university['name']); ?>
+
+                            </option>
+
+                        <?php
+
+                        }
+
+                        ?>
+
+                    </select>
+
+                </div>
+
+
+                <!-- ==========================
+                     UNIVERSITY ID + EMAIL
+                =========================== -->
+
+                <!-- UNIVERSITY ID -->
+                <div class="col-md-6 mb-3">
+
+                    <label for="university_id">University ID</label>
+
+                    <input type="text"
+                           id="university_id"
+                           class="form-control"
+                           name="university_id"
+                           placeholder="e.g. 221-35-xxxx"
+                           required>
+
+                </div>
+
+
+                <!-- EMAIL -->
+                <div class="col-md-6 mb-3">
+
+                    <label for="email">Email</label>
+
+                    <input type="email"
+                           id="email"
+                           class="form-control"
+                           name="email"
+                           placeholder="Enter your email"
+                           required>
+
+                </div>
+
+
+                <!-- ==========================
+                     PHONE + DEPARTMENT
+                =========================== -->
+
+                <!-- PHONE -->
+                <div class="col-md-6 mb-3">
+
+                    <label for="phone">Phone Number</label>
+
+                    <input type="text"
+                           id="phone"
+                           class="form-control"
+                           name="phone"
+                           placeholder="01XXXXXXXXX"
+                           required>
+
+                </div>
+
+
+                <!-- DEPARTMENT -->
+                <div class="col-md-6 mb-3">
+
+                    <label for="department">Department</label>
+
+                    <select class="form-select"
+                            id="department"
+                            name="department"
+                            required>
+
+                        <option value="">Select Department</option>
+
+                        <option value="CSE">CSE</option>
+                        <option value="EEE">EEE</option>
+                        <option value="CE">CE</option>
+                        <option value="Business Administration">
+                            Business Administration
                         </option>
+                        <option value="English">English</option>
+                        <option value="Law">Law</option>
+                        <option value="Pharmacy">Pharmacy</option>
+                        <option value="Architecture">Architecture</option>
+                        <option value="Other">Other</option>
 
-                    <?php
+                    </select>
 
-                    }
-
-                    ?>
-
-                </select>
-
-            </div>
-
-
-            <!-- UNIVERSITY ID -->
-            <div class="col-md-6 mb-3">
-
-                <label>University ID</label>
-
-                <input type="text"
-                       class="form-control"
-                       name="university_id"
-                       placeholder="e.g. 221-35-xxxx"
-                       required>
-
-            </div>
+                </div>
 
 
-            <!-- EMAIL -->
-            <div class="col-md-6 mb-3">
+                <!-- ==========================
+                     ID CARD
+                =========================== -->
 
-                <label>Email</label>
+                <div class="col-12 mb-3">
 
-                <input type="email"
-                       class="form-control"
-                       name="email"
-                       placeholder="Enter your email"
-                       required>
+                    <label for="profile_image">
+                        University ID Card
+                    </label>
 
-            </div>
+                    <input type="file"
+                           id="profile_image"
+                           class="form-control"
+                           name="profile_image"
+                           accept=".jpg,.jpeg,.png"
+                           required>
 
+                    <small class="text-muted">
 
-            <!-- PHONE -->
-            <div class="col-md-6 mb-3">
+                        Upload a clear photo of your university ID card.
+                        This image will be used as your profile picture
+                        and verified by an administrator.
 
-                <label>Phone Number</label>
+                    </small>
 
-                <input type="text"
-                       class="form-control"
-                       name="phone"
-                       placeholder="01XXXXXXXXX"
-                       required>
-
-            </div>
-
-
-            <!-- DEPARTMENT -->
-            <div class="col-md-6 mb-3">
-
-                <label>Department</label>
-
-                <select class="form-select"
-                        name="department"
-                        required>
-
-                    <option value="">Select Department</option>
-
-                    <option>CSE</option>
-                    <option>EEE</option>
-                    <option>CE</option>
-                    <option>Business Administration</option>
-                    <option>English</option>
-                    <option>Law</option>
-                    <option>Pharmacy</option>
-                    <option>Architecture</option>
-                    <option>Other</option>
-
-                </select>
-
-            </div>
+                </div>
 
 
-            <!-- PROFILE PICTURE -->
-            <div class="col-md-6 mb-3">
+                <!-- ==========================
+                     PASSWORD ROW
+                =========================== -->
 
-                <label>Profile Picture</label>
+                <div class="col-md-6 mb-4">
 
-                <input type="file"
-                       class="form-control"
-                       name="profile_image"
-                       accept=".jpg,.jpeg,.png">
+                    <label for="password">Password</label>
 
-            </div>
+                    <input type="password"
+                           id="password"
+                           class="form-control"
+                           name="password"
+                           placeholder="Create password"
+                           required>
+
+                </div>
 
 
-            <!-- PASSWORD -->
-            <div class="col-md-6 mb-3">
+                <!-- CONFIRM PASSWORD -->
+                <div class="col-md-6 mb-4">
 
-                <label>Password</label>
+                    <label for="confirm_password">
+                        Confirm Password
+                    </label>
 
-                <input type="password"
-                       class="form-control"
-                       name="password"
-                       placeholder="Create password"
-                       required>
+                    <input type="password"
+                           id="confirm_password"
+                           class="form-control"
+                           name="confirm_password"
+                           placeholder="Confirm password"
+                           required>
+
+                </div>
+
+
+                <!-- ==========================
+                     SUBMIT
+                =========================== -->
+
+                <div class="col-12">
+
+                    <button type="submit"
+                            class="btn btn-primary btn-lg">
+
+                        Create Account
+
+                    </button>
+
+                </div>
 
             </div>
 
-
-            <!-- CONFIRM PASSWORD -->
-            <div class="col-md-6 mb-4">
-
-                <label>Confirm Password</label>
-
-                <input type="password"
-                       class="form-control"
-                       name="confirm_password"
-                       placeholder="Confirm password"
-                       required>
-
-            </div>
+        </form>
 
 
-            <!-- SUBMIT -->
-            <div class="col-12">
+        <!-- LOGIN LINK -->
 
-                <button type="submit"
-                        class="btn btn-primary btn-lg">
+        <div class="login-link">
 
-                    Create Account
+            Already have an account?
 
-                </button>
-
-            </div>
+            <a href="login.php">
+                Sign In
+            </a>
 
         </div>
-
-    </form>
-
-
-    <div class="login-link">
-
-        Already have an account?
-
-        <a href="login.php">Sign In</a>
 
     </div>
 
 </div>
 
-</div>
 
 <script src="assets/js/register.js"></script>
 

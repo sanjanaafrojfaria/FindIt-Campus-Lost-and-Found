@@ -1,4 +1,3 @@
-
 <?php
 
 error_reporting(E_ALL);
@@ -23,25 +22,40 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
    GET FORM DATA
 =========================== */
 
-$full_name = trim($_POST['full_name']);
+$full_name = trim($_POST['full_name'] ?? '');
 
-$university_id = trim($_POST['university_id']);
+$university_id = trim($_POST['university_id'] ?? '');
 
 $university_ref_id = $_POST['university_ref_id'] ?? '';
 
-$email = trim($_POST['email']);
+$email = trim($_POST['email'] ?? '');
 
-$phone = trim($_POST['phone']);
+$phone = trim($_POST['phone'] ?? '');
 
-$department = trim($_POST['department']);
+$department = trim($_POST['department'] ?? '');
 
-$password = $_POST['password'];
+$password = $_POST['password'] ?? '';
 
-$confirm_password = $_POST['confirm_password'];
+$confirm_password = $_POST['confirm_password'] ?? '';
 
 
 /* ===========================
-   VALIDATION
+   CHECK PROFILE IMAGE / ID CARD
+=========================== */
+
+if (
+    !isset($_FILES['profile_image']) ||
+    $_FILES['profile_image']['error'] !== UPLOAD_ERR_OK
+) {
+
+    header("Location: message.php?action=id_card_required");
+    exit();
+
+}
+
+
+/* ===========================
+   BASIC VALIDATION
 =========================== */
 
 if (
@@ -86,10 +100,116 @@ if ($password !== $confirm_password) {
 
 
 /* ===========================
+   GET UPLOADED IMAGE
+=========================== */
+
+$profile_image = $_FILES['profile_image'];
+
+$max_file_size = 5 * 1024 * 1024; // 5 MB
+
+
+/* ===========================
+   CHECK FILE SIZE
+=========================== */
+
+if ($profile_image['size'] > $max_file_size) {
+
+    header("Location: message.php?action=id_card_too_large");
+    exit();
+
+}
+
+
+/* ===========================
+   VERIFY IMAGE
+=========================== */
+
+$image_info = getimagesize($profile_image['tmp_name']);
+
+if ($image_info === false) {
+
+    header("Location: message.php?action=invalid_id_card");
+    exit();
+
+}
+
+
+/* ===========================
+   ALLOWED IMAGE TYPES
+=========================== */
+
+$allowed_types = [
+    IMAGETYPE_JPEG,
+    IMAGETYPE_PNG
+];
+
+if (!in_array($image_info[2], $allowed_types, true)) {
+
+    header("Location: message.php?action=invalid_id_card");
+    exit();
+
+}
+
+
+/* ===========================
+   CREATE PROFILE DIRECTORY
+=========================== */
+
+$upload_directory = __DIR__ . "/uploads/profile/";
+
+
+if (!is_dir($upload_directory)) {
+
+    if (!mkdir($upload_directory, 0755, true)) {
+
+        die("Failed to create profile image directory.");
+
+    }
+
+}
+
+
+/* ===========================
+   CREATE UNIQUE FILE NAME
+=========================== */
+
+$file_extension = ($image_info[2] === IMAGETYPE_PNG)
+    ? "png"
+    : "jpg";
+
+
+$new_file_name =
+    "profile_" .
+    bin2hex(random_bytes(16)) .
+    "." .
+    $file_extension;
+
+
+$upload_path = $upload_directory . $new_file_name;
+
+
+/* ===========================
+   MOVE IMAGE
+=========================== */
+
+if (!move_uploaded_file(
+    $profile_image['tmp_name'],
+    $upload_path
+)) {
+
+    header("Location: message.php?action=id_card_upload_failed");
+    exit();
+
+}
+
+
+/* ===========================
    CHECK UNIVERSITY
 =========================== */
 
-$sql = "SELECT id FROM universities WHERE id = ?";
+$sql = "SELECT id
+        FROM universities
+        WHERE id = ?";
 
 $stmt = mysqli_prepare($conn, $sql);
 
@@ -103,9 +223,12 @@ mysqli_stmt_execute($stmt);
 
 mysqli_stmt_store_result($stmt);
 
+
 if (mysqli_stmt_num_rows($stmt) == 0) {
 
     mysqli_stmt_close($stmt);
+
+    unlink($upload_path);
 
     header("Location: message.php?action=invalid_university");
     exit();
@@ -119,7 +242,9 @@ mysqli_stmt_close($stmt);
    CHECK DUPLICATE EMAIL
 =========================== */
 
-$sql = "SELECT id FROM users WHERE email = ?";
+$sql = "SELECT id
+        FROM users
+        WHERE email = ?";
 
 $stmt = mysqli_prepare($conn, $sql);
 
@@ -133,9 +258,12 @@ mysqli_stmt_execute($stmt);
 
 mysqli_stmt_store_result($stmt);
 
+
 if (mysqli_stmt_num_rows($stmt) > 0) {
 
     mysqli_stmt_close($stmt);
+
+    unlink($upload_path);
 
     header("Location: message.php?action=email_exists");
     exit();
@@ -147,25 +275,33 @@ mysqli_stmt_close($stmt);
 
 /* ===========================
    CHECK DUPLICATE UNIVERSITY ID
+   WITHIN SAME UNIVERSITY
 =========================== */
 
-$sql = "SELECT id FROM users WHERE university_id = ?";
+$sql = "SELECT id
+        FROM users
+        WHERE university_id = ?
+        AND university_ref_id = ?";
 
 $stmt = mysqli_prepare($conn, $sql);
 
 mysqli_stmt_bind_param(
     $stmt,
-    "s",
-    $university_id
+    "si",
+    $university_id,
+    $university_ref_id
 );
 
 mysqli_stmt_execute($stmt);
 
 mysqli_stmt_store_result($stmt);
 
+
 if (mysqli_stmt_num_rows($stmt) > 0) {
 
     mysqli_stmt_close($stmt);
+
+    unlink($upload_path);
 
     header("Location: message.php?action=id_exists");
     exit();
@@ -197,23 +333,38 @@ $sql = "INSERT INTO users
     email,
     phone,
     department,
+    profile_image,
     password
 )
-VALUES (?, ?, ?, ?, ?, ?, ?)";
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 
 $stmt = mysqli_prepare($conn, $sql);
 
 
+if (!$stmt) {
+
+    unlink($upload_path);
+
+    die("Database Error: " . mysqli_error($conn));
+
+}
+
+
+/* ===========================
+   BIND PARAMETERS
+=========================== */
+
 mysqli_stmt_bind_param(
     $stmt,
-    "ssissss",
+    "ssisssss",
     $full_name,
     $university_id,
     $university_ref_id,
     $email,
     $phone,
     $department,
+    $new_file_name,
     $hashed_password
 );
 
@@ -232,9 +383,12 @@ if (mysqli_stmt_execute($stmt)) {
 
 } else {
 
+    unlink($upload_path);
+
     echo "Database Error: " . mysqli_error($conn);
+
+    mysqli_stmt_close($stmt);
 
 }
 
 ?>
-
