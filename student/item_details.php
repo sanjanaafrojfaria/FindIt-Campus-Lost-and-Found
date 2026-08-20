@@ -554,43 +554,70 @@ echo nl2br(
 
 </div>
 
-<!-- BACK -->
-
-<div class="mt-4">
+<!-- ===========================
+     ACTION BUTTONS
+=========================== -->
 
 <div class="mt-4 d-flex gap-2 flex-wrap">
 
-    <?php if (
-        $item_type === "Found" &&
-        $item['status'] === "Available"
-    ) { ?>
+    <?php
+    /*
+     * LOST ITEM
+     * Someone who found this item can contact
+     * the original reporter.
+     */
 
-        <?php
-        // Check if the logged-in student is the person
-        // who reported this found item.
+    if (
+        $item_type === "Lost" &&
+        $item['status'] === "Open" &&
+        (int)$item['user_id'] !== (int)$user_id
+    ) {
+    ?>
 
-        if ($item['user_id'] != $user_id) {
-        ?>
+        <a
+            href="found_item.php?id=<?= $item_id ?>&type=Lost"
+            class="btn btn-danger back-btn">
 
-            <a
-                href="claim_item.php?id=<?php echo $item_id; ?>&type=Found"
-                class="btn btn-success back-btn">
+            <i class="fa-solid fa-hand-holding-heart me-1"></i>
 
-                <i class="fa-solid fa-hand-holding-heart"></i>
+            I Found This Item
 
-                Claim This Item
-
-            </a>
-
-        <?php } ?>
+        </a>
 
     <?php } ?>
+
+
+    <?php
+    /*
+     * FOUND ITEM
+     * Someone who lost the item can claim it.
+     */
+
+    if (
+        $item_type === "Found" &&
+        $item['status'] === "Available" &&
+        (int)$item['user_id'] !== (int)$user_id
+    ) {
+    ?>
+
+        <a
+            href="claim_item.php?id=<?= $item_id ?>&type=Found"
+            class="btn btn-success back-btn">
+
+            <i class="fa-solid fa-hand-holding-heart me-1"></i>
+
+            Claim This Item
+
+        </a>
+
+    <?php } ?>
+
 
     <a
         href="search.php"
         class="btn btn-outline-primary back-btn">
 
-        <i class="fa-solid fa-arrow-left"></i>
+        <i class="fa-solid fa-arrow-left me-1"></i>
 
         Back to Search
 

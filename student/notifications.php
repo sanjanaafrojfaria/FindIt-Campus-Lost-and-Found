@@ -1,3 +1,4 @@
+
 <?php
 
 session_start();
@@ -23,18 +24,29 @@ $sql = "
 
         n.id AS notification_id,
         n.claim_id,
+        n.found_response_id,
         n.message,
         n.is_read,
         n.created_at,
+
+        /* CLAIM INFORMATION */
 
         c.user_id AS claimant_id,
         c.status AS claim_status,
 
         f.id AS item_id,
         f.item_name,
-        f.user_id AS reporter_id
+        f.user_id AS reporter_id,
+
+        /* FOUND RESPONSE INFORMATION */
+
+        fr.finder_id AS found_finder_id,
+        fr.status AS found_response_status,
+        fr.lost_item_id AS found_lost_item_id
 
     FROM notifications n
+
+    /* CLAIM SYSTEM */
 
     LEFT JOIN claims c
         ON n.claim_id = c.id
@@ -42,14 +54,18 @@ $sql = "
     LEFT JOIN found_items f
         ON c.item_id = f.id
 
+    /* I FOUND THIS ITEM SYSTEM */
+
+    LEFT JOIN found_responses fr
+        ON n.found_response_id = fr.id
+
     WHERE n.user_id = ?
 
     ORDER BY n.created_at DESC
 ";
 
 
-$stmt =
-    mysqli_prepare($conn, $sql);
+$stmt = mysqli_prepare($conn, $sql);
 
 if (!$stmt) {
 
@@ -65,15 +81,11 @@ mysqli_stmt_bind_param(
 
 mysqli_stmt_execute($stmt);
 
-$result =
-    mysqli_stmt_get_result($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
 $notifications = [];
 
-while (
-    $row =
-    mysqli_fetch_assoc($result)
-) {
+while ($row = mysqli_fetch_assoc($result)) {
 
     $notifications[] = $row;
 
@@ -82,11 +94,9 @@ while (
 mysqli_stmt_close($stmt);
 
 
-/*
- * Mark notifications as read AFTER retrieving them.
- *
- * This allows the current page to still show NEW.
- */
+/* ===========================
+   MARK NOTIFICATIONS AS READ
+=========================== */
 
 $sql = "
     UPDATE notifications
@@ -96,19 +106,21 @@ $sql = "
     WHERE user_id = ?
 ";
 
+$stmt = mysqli_prepare($conn, $sql);
 
-$stmt =
-    mysqli_prepare($conn, $sql);
+if ($stmt) {
 
-mysqli_stmt_bind_param(
-    $stmt,
-    "i",
-    $user_id
-);
+    mysqli_stmt_bind_param(
+        $stmt,
+        "i",
+        $user_id
+    );
 
-mysqli_stmt_execute($stmt);
+    mysqli_stmt_execute($stmt);
 
-mysqli_stmt_close($stmt);
+    mysqli_stmt_close($stmt);
+
+}
 
 ?>
 
@@ -150,11 +162,13 @@ body {
 
 }
 
+
 .notifications-section {
 
     padding: 130px 20px 70px;
 
 }
+
 
 .page-title {
 
@@ -168,6 +182,7 @@ body {
 
 }
 
+
 .page-subtitle {
 
     text-align: center;
@@ -177,6 +192,7 @@ body {
     margin-bottom: 40px;
 
 }
+
 
 .notification-card {
 
@@ -197,6 +213,7 @@ body {
 
 }
 
+
 .notification-card:hover {
 
     transform: translateY(-3px);
@@ -205,6 +222,7 @@ body {
         0 12px 35px rgba(0,0,0,.10);
 
 }
+
 
 .notification-icon {
 
@@ -226,6 +244,7 @@ body {
 
 }
 
+
 .icon-default {
 
     background: #dbeafe;
@@ -233,6 +252,7 @@ body {
     color: #2563eb;
 
 }
+
 
 .icon-claim {
 
@@ -242,6 +262,7 @@ body {
 
 }
 
+
 .icon-approved {
 
     background: #dcfce7;
@@ -249,6 +270,7 @@ body {
     color: #16a34a;
 
 }
+
 
 .icon-rejected {
 
@@ -258,6 +280,7 @@ body {
 
 }
 
+
 .icon-completed {
 
     background: #dcfce7;
@@ -265,6 +288,16 @@ body {
     color: #15803d;
 
 }
+
+
+.icon-found {
+
+    background: #dbeafe;
+
+    color: #2563eb;
+
+}
+
 
 .notification-title {
 
@@ -276,6 +309,7 @@ body {
 
 }
 
+
 .notification-text {
 
     color: #64748b;
@@ -283,6 +317,7 @@ body {
     margin: 5px 0;
 
 }
+
 
 .notification-time {
 
@@ -292,6 +327,7 @@ body {
 
 }
 
+
 .notification-btn {
 
     border-radius: 30px;
@@ -299,6 +335,7 @@ body {
     font-weight: 600;
 
 }
+
 
 .empty-notifications {
 
@@ -315,6 +352,7 @@ body {
 
 }
 
+
 .empty-notifications i {
 
     font-size: 60px;
@@ -324,6 +362,7 @@ body {
     margin-bottom: 20px;
 
 }
+
 
 .new-label {
 
@@ -350,6 +389,7 @@ body {
 
 <body>
 
+
 <?php include "../includes/student_navbar.php"; ?>
 
 
@@ -357,6 +397,10 @@ body {
 
 <div class="container">
 
+
+<!-- ===========================
+     PAGE TITLE
+=========================== -->
 
 <h1 class="page-title">
 
@@ -382,6 +426,10 @@ body {
 
         <?php
 
+        /* ===========================
+           BASIC DATA
+        =========================== */
+
         $message =
             $notification['message'];
 
@@ -398,15 +446,51 @@ body {
             (int)$notification['claimant_id'];
 
 
+        /* ===========================
+           FOUND RESPONSE DATA
+        =========================== */
+
+        $found_response_id =
+            (int)$notification['found_response_id'];
+
+        $found_finder_id =
+            (int)$notification['found_finder_id'];
+
+        $found_response_status =
+            $notification['found_response_status'];
+
+
+        /* ===========================
+           NOTIFICATION TYPES
+        =========================== */
+
         $is_claim_notification =
+            !empty($notification['claim_id']);
+
+
+        $is_found_response_notification =
             !empty(
-                $notification['claim_id']
+                $notification['found_response_id']
             );
 
 
-        /*
-         * Determine notification appearance.
-         */
+        /* ===========================
+           DEFAULT APPEARANCE
+        =========================== */
+
+        $icon_class =
+            'icon-default';
+
+        $icon =
+            'fa-bell';
+
+        $title =
+            'Notification';
+
+
+        /* ===========================
+           HANDOVER COMPLETED
+        =========================== */
 
         if (
             stripos(
@@ -425,6 +509,10 @@ body {
                 'Handover Completed';
 
 
+        /* ===========================
+           HANDOVER ACCEPTED
+        =========================== */
+
         } elseif (
             stripos(
                 $message,
@@ -441,6 +529,10 @@ body {
             $title =
                 'Handover Accepted';
 
+
+        /* ===========================
+           HANDOVER MEETING
+        =========================== */
 
         } elseif (
             stripos(
@@ -459,6 +551,10 @@ body {
                 'Handover Meeting Scheduled';
 
 
+        /* ===========================
+           CLAIM APPROVED
+        =========================== */
+
         } elseif (
             stripos(
                 $message,
@@ -475,6 +571,10 @@ body {
             $title =
                 'Claim Approved';
 
+
+        /* ===========================
+           CLAIM REJECTED
+        =========================== */
 
         } elseif (
             stripos(
@@ -493,6 +593,28 @@ body {
                 'Claim Rejected';
 
 
+        /* ===========================
+           FOUND RESPONSE
+        =========================== */
+
+        } elseif (
+            $is_found_response_notification
+        ) {
+
+            $icon_class =
+                'icon-found';
+
+            $icon =
+                'fa-hand-holding-heart';
+
+            $title =
+                'Someone Found Your Item';
+
+
+        /* ===========================
+           CLAIM NOTIFICATION
+        =========================== */
+
         } elseif (
             stripos(
                 $message,
@@ -509,22 +631,14 @@ body {
             $title =
                 'Claim Notification';
 
-
-        } else {
-
-            $icon_class =
-                'icon-default';
-
-            $icon =
-                'fa-bell';
-
-            $title =
-                'Notification';
-
         }
 
         ?>
 
+
+        <!-- ===========================
+             NOTIFICATION CARD
+        ============================ -->
 
         <div class="notification-card">
 
@@ -534,6 +648,8 @@ body {
             gap-3
             align-items-start">
 
+
+                <!-- ICON -->
 
                 <div
                 class="notification-icon
@@ -547,8 +663,12 @@ body {
                 </div>
 
 
+                <!-- CONTENT -->
+
                 <div class="flex-grow-1">
 
+
+                    <!-- TITLE -->
 
                     <div class="notification-title">
 
@@ -559,6 +679,8 @@ body {
                     </div>
 
 
+                    <!-- MESSAGE -->
+
                     <div class="notification-text">
 
                         <?= htmlspecialchars(
@@ -567,6 +689,8 @@ body {
 
                     </div>
 
+
+                    <!-- TIME -->
 
                     <div class="notification-time">
 
@@ -613,8 +737,40 @@ body {
                     <?php endif; ?>
 
 
+                    <!-- ===========================
+                         FOUND RESPONSE ACTION
+                    ============================ -->
+
+                    <?php if (
+                        $is_found_response_notification &&
+                        $found_response_id > 0
+                    ): ?>
+
+
+                        <a
+                            href="found_response_details.php?id=<?= $found_response_id ?>"
+                            class="btn btn-success notification-btn mt-3">
+
+                            <i
+                                class="fa-solid
+                                fa-eye
+                                me-1">
+                            </i>
+
+                            View Found Response
+
+                        </a>
+
+
+                    <?php endif; ?>
+
+
                 </div>
 
+
+                <!-- ===========================
+                     NEW LABEL
+                ============================ -->
 
                 <?php if (
                     !$notification['is_read']
@@ -640,6 +796,10 @@ body {
 
 <?php else: ?>
 
+
+    <!-- ===========================
+         EMPTY
+    ============================ -->
 
     <div class="empty-notifications">
 
@@ -672,6 +832,8 @@ body {
 
 </section>
 
+
 </body>
 
 </html>
+
