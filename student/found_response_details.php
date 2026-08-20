@@ -788,17 +788,97 @@ Back
 
 </div>
 
-
 <?php else: ?>
-
 
 <div class="mt-4">
 
+    <?php if ($response['status'] === 'Accepted'): ?>
 
-<a
-href="notifications.php"
-class="btn btn-outline-primary action-btn"
->
+        <div class="alert alert-success">
+
+            <i class="fa-solid fa-circle-check me-2"></i>
+
+            <strong>Response Accepted</strong>
+
+            <br>
+
+            The finder has reported that they found your item.
+
+        </div>
+
+
+        <?php if (
+            isset($_GET['found']) &&
+            $_GET['found'] == '1'
+        ): ?>
+
+            <div class="alert alert-success">
+
+                <i class="fa-solid fa-check-circle me-2"></i>
+
+                Your lost item has been marked as
+                <strong>Found</strong>.
+
+            </div>
+
+        <?php elseif (
+            $response['status'] === 'Accepted'
+        ): ?>
+
+            <form
+                action="found_response_action.php"
+                method="POST"
+                class="mb-3"
+                onsubmit="return confirm(
+                    'Are you sure you found your item? This will mark the lost item as Found.'
+                );"
+            >
+
+                <input
+                    type="hidden"
+                    name="response_id"
+                    value="<?= $response_id ?>"
+                >
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="mark_found"
+                >
+
+                <button
+                    type="submit"
+                    class="btn btn-success action-btn"
+                >
+
+                    <i class="fa-solid fa-check-circle me-1"></i>
+
+                    I Found My Item
+
+                </button>
+
+            </form>
+
+        <?php endif; ?>
+
+    <?php endif; ?>
+
+
+    <a
+        href="notifications.php"
+        class="btn btn-outline-primary action-btn"
+    >
+
+        <i class="fa-solid fa-arrow-left me-1"></i>
+
+        Back to Notifications
+
+    </a>
+
+</div>
+
+<?php endif; ?>
+
 
 
 <i class="fa-solid fa-arrow-left me-1"></i>

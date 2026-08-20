@@ -469,9 +469,14 @@ body {
 
 
         $is_found_response_notification =
-            !empty(
-                $notification['found_response_id']
-            );
+    !empty(
+        $notification['found_response_id']
+    );
+
+$is_found_response_for_reporter =
+    $is_found_response_notification &&
+    $notification['reporter_id'] !== null &&
+    (int)$notification['reporter_id'] === $user_id;
 
 
         /* ===========================
@@ -598,18 +603,17 @@ body {
         =========================== */
 
         } elseif (
-            $is_found_response_notification
-        ) {
+    $is_found_response_for_reporter
+) {
 
-            $icon_class =
-                'icon-found';
+    $icon_class =
+        'icon-found';
 
-            $icon =
-                'fa-hand-holding-heart';
+    $icon =
+        'fa-hand-holding-heart';
 
-            $title =
-                'Someone Found Your Item';
-
+    $title =
+        'Someone Found Your Item';
 
         /* ===========================
            CLAIM NOTIFICATION
@@ -742,27 +746,23 @@ body {
                     ============================ -->
 
                     <?php if (
-                        $is_found_response_notification &&
-                        $found_response_id > 0
-                    ): ?>
+    $is_found_response_for_reporter &&
+    $found_response_id > 0
+): ?>
 
+    <a
+        href="found_response_details.php?id=<?= $found_response_id ?>"
+        class="btn btn-success notification-btn mt-3">
 
-                        <a
-                            href="found_response_details.php?id=<?= $found_response_id ?>"
-                            class="btn btn-success notification-btn mt-3">
+        <i
+            class="fa-solid fa-eye me-1">
+        </i>
 
-                            <i
-                                class="fa-solid
-                                fa-eye
-                                me-1">
-                            </i>
+        View Found Response
 
-                            View Found Response
+    </a>
 
-                        </a>
-
-
-                    <?php endif; ?>
+<?php endif; ?>
 
 
                 </div>
