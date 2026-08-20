@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 
 include "../config/database.php";
 
-$user_id = $_SESSION['user_id'];
+$user_id = (int)$_SESSION['user_id'];
 
 
 /* ===========================
@@ -30,14 +30,15 @@ $claim_id = isset($_POST['claim_id'])
     ? (int)$_POST['claim_id']
     : 0;
 
-$action = $_POST['action'] ?? '';
+$action = $_POST['action'] ?? "";
 
 
 if (
     $claim_id <= 0 ||
     !in_array(
         $action,
-        ['approve', 'reject']
+        ['approve', 'reject'],
+        true
     )
 ) {
 
@@ -53,6 +54,7 @@ if (
 
 $sql = "
     SELECT
+
         c.id,
         c.item_id,
         c.user_id AS claimant_id,
@@ -76,6 +78,12 @@ $sql = "
 
 $stmt = mysqli_prepare($conn, $sql);
 
+if (!$stmt) {
+
+    die("Database error.");
+
+}
+
 mysqli_stmt_bind_param(
     $stmt,
     "i",
@@ -84,11 +92,9 @@ mysqli_stmt_bind_param(
 
 mysqli_stmt_execute($stmt);
 
-$result =
-    mysqli_stmt_get_result($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
-$claim =
-    mysqli_fetch_assoc($result);
+$claim = mysqli_fetch_assoc($result);
 
 mysqli_stmt_close($stmt);
 
@@ -109,8 +115,7 @@ if (!$claim) {
 =========================== */
 
 if (
-    (int)$claim['reporter_id'] !==
-    (int)$user_id
+    (int)$claim['reporter_id'] !== $user_id
 ) {
 
     die(
@@ -126,7 +131,11 @@ if (
 
 if ($claim['status'] !== "Pending") {
 
-    header("Location: notifications.php");
+    header(
+        "Location: claim_details.php?id=" .
+        $claim_id
+    );
+
     exit();
 
 }
@@ -154,8 +163,7 @@ if ($action === "approve") {
             FOR UPDATE
         ";
 
-        $stmt =
-            mysqli_prepare($conn, $sql);
+        $stmt = mysqli_prepare($conn, $sql);
 
         if (!$stmt) {
 
@@ -173,11 +181,9 @@ if ($action === "approve") {
 
         mysqli_stmt_execute($stmt);
 
-        $result =
-            mysqli_stmt_get_result($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
-        $item =
-            mysqli_fetch_assoc($result);
+        $item = mysqli_fetch_assoc($result);
 
         mysqli_stmt_close($stmt);
 
@@ -195,10 +201,7 @@ if ($action === "approve") {
            ITEM MUST BE AVAILABLE
         =========================== */
 
-        if (
-            $item['status'] !==
-            "Available"
-        ) {
+        if ($item['status'] !== "Available") {
 
             throw new Exception(
                 "Item is no longer available."
@@ -213,14 +216,23 @@ if ($action === "approve") {
 
         $sql = "
             UPDATE claims
+
             SET status = 'Approved'
+
             WHERE
                 id = ?
                 AND status = 'Pending'
         ";
 
-        $stmt =
-            mysqli_prepare($conn, $sql);
+        $stmt = mysqli_prepare($conn, $sql);
+
+        if (!$stmt) {
+
+            throw new Exception(
+                "Could not prepare claim update."
+            );
+
+        }
 
         mysqli_stmt_bind_param(
             $stmt,
@@ -228,12 +240,18 @@ if ($action === "approve") {
             $claim_id
         );
 
-        if (
-            !mysqli_stmt_execute($stmt)
-        ) {
+        if (!mysqli_stmt_execute($stmt)) {
 
             throw new Exception(
                 "Could not approve claim."
+            );
+
+        }
+
+        if (mysqli_stmt_affected_rows($stmt) !== 1) {
+
+            throw new Exception(
+                "Claim was already processed."
             );
 
         }
@@ -247,12 +265,21 @@ if ($action === "approve") {
 
         $sql = "
             UPDATE found_items
+
             SET status = 'Claimed'
+
             WHERE id = ?
         ";
 
-        $stmt =
-            mysqli_prepare($conn, $sql);
+        $stmt = mysqli_prepare($conn, $sql);
+
+        if (!$stmt) {
+
+            throw new Exception(
+                "Could not prepare item update."
+            );
+
+        }
 
         mysqli_stmt_bind_param(
             $stmt,
@@ -260,9 +287,7 @@ if ($action === "approve") {
             $claim['item_id']
         );
 
-        if (
-            !mysqli_stmt_execute($stmt)
-        ) {
+        if (!mysqli_stmt_execute($stmt)) {
 
             throw new Exception(
                 "Could not update item status."
@@ -279,7 +304,9 @@ if ($action === "approve") {
 
         $sql = "
             UPDATE claims
+
             SET status = 'Rejected'
+
             WHERE
                 item_id = ?
                 AND item_type = 'Found'
@@ -287,8 +314,15 @@ if ($action === "approve") {
                 AND status = 'Pending'
         ";
 
-        $stmt =
-            mysqli_prepare($conn, $sql);
+        $stmt = mysqli_prepare($conn, $sql);
+
+        if (!$stmt) {
+
+            throw new Exception(
+                "Could not prepare other claim update."
+            );
+
+        }
 
         mysqli_stmt_bind_param(
             $stmt,
@@ -297,9 +331,7 @@ if ($action === "approve") {
             $claim_id
         );
 
-        if (
-            !mysqli_stmt_execute($stmt)
-        ) {
+        if (!mysqli_stmt_execute($stmt)) {
 
             throw new Exception(
                 "Could not reject other claims."
@@ -317,7 +349,7 @@ if ($action === "approve") {
         $message =
             'Your claim for the found item "' .
             $claim['item_name'] .
-            '" has been approved.';
+            '" has been approved. The reporter can now schedule a handover meeting.';
 
 
         $sql = "
@@ -328,17 +360,17 @@ if ($action === "approve") {
                 message,
                 is_read
             )
+
             VALUES
             (?, ?, ?, 0)
         ";
 
-        $stmt =
-            mysqli_prepare($conn, $sql);
+        $stmt = mysqli_prepare($conn, $sql);
 
         if (!$stmt) {
 
             throw new Exception(
-                "Could not prepare approval notification."
+                "Could not prepare notification."
             );
 
         }
@@ -351,12 +383,10 @@ if ($action === "approve") {
             $message
         );
 
-        if (
-            !mysqli_stmt_execute($stmt)
-        ) {
+        if (!mysqli_stmt_execute($stmt)) {
 
             throw new Exception(
-                "Could not create approval notification."
+                "Could not create notification."
             );
 
         }
@@ -364,25 +394,16 @@ if ($action === "approve") {
         mysqli_stmt_close($stmt);
 
 
-        /* ===========================
-           COMMIT
-        =========================== */
-
-        if (!mysqli_commit($conn)) {
-
-            throw new Exception(
-                "Transaction commit failed."
-            );
-
-        }
+        mysqli_commit($conn);
 
 
         /* ===========================
-           SUCCESS
+           GO TO CLAIM DETAILS
         =========================== */
 
         header(
-            "Location: notifications.php"
+            "Location: claim_details.php?id=" .
+            $claim_id
         );
 
         exit();
@@ -410,9 +431,7 @@ if ($action === "approve") {
 
 if ($action === "reject") {
 
-
     mysqli_begin_transaction($conn);
-
 
     try {
 
@@ -423,14 +442,23 @@ if ($action === "reject") {
 
         $sql = "
             UPDATE claims
+
             SET status = 'Rejected'
+
             WHERE
                 id = ?
                 AND status = 'Pending'
         ";
 
-        $stmt =
-            mysqli_prepare($conn, $sql);
+        $stmt = mysqli_prepare($conn, $sql);
+
+        if (!$stmt) {
+
+            throw new Exception(
+                "Could not prepare rejection."
+            );
+
+        }
 
         mysqli_stmt_bind_param(
             $stmt,
@@ -438,12 +466,18 @@ if ($action === "reject") {
             $claim_id
         );
 
-        if (
-            !mysqli_stmt_execute($stmt)
-        ) {
+        if (!mysqli_stmt_execute($stmt)) {
 
             throw new Exception(
                 "Could not reject claim."
+            );
+
+        }
+
+        if (mysqli_stmt_affected_rows($stmt) !== 1) {
+
+            throw new Exception(
+                "Claim was already processed."
             );
 
         }
@@ -469,17 +503,17 @@ if ($action === "reject") {
                 message,
                 is_read
             )
+
             VALUES
             (?, ?, ?, 0)
         ";
 
-        $stmt =
-            mysqli_prepare($conn, $sql);
+        $stmt = mysqli_prepare($conn, $sql);
 
         if (!$stmt) {
 
             throw new Exception(
-                "Could not prepare rejection notification."
+                "Could not prepare notification."
             );
 
         }
@@ -492,12 +526,10 @@ if ($action === "reject") {
             $message
         );
 
-        if (
-            !mysqli_stmt_execute($stmt)
-        ) {
+        if (!mysqli_stmt_execute($stmt)) {
 
             throw new Exception(
-                "Could not create rejection notification."
+                "Could not create notification."
             );
 
         }
@@ -505,15 +537,12 @@ if ($action === "reject") {
         mysqli_stmt_close($stmt);
 
 
-        /* ===========================
-           COMMIT
-        =========================== */
-
         mysqli_commit($conn);
 
 
         header(
-            "Location: notifications.php"
+            "Location: claim_details.php?id=" .
+            $claim_id
         );
 
         exit();

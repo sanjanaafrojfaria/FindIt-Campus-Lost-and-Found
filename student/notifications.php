@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 
 include "../config/database.php";
 
-$user_id = $_SESSION['user_id'];
+$user_id = (int)$_SESSION['user_id'];
 
 
 /* ===========================
@@ -20,6 +20,7 @@ $user_id = $_SESSION['user_id'];
 
 $sql = "
     SELECT
+
         n.id AS notification_id,
         n.claim_id,
         n.message,
@@ -50,6 +51,12 @@ $sql = "
 $stmt =
     mysqli_prepare($conn, $sql);
 
+if (!$stmt) {
+
+    die("Database error.");
+
+}
+
 mysqli_stmt_bind_param(
     $stmt,
     "i",
@@ -75,15 +82,20 @@ while (
 mysqli_stmt_close($stmt);
 
 
-/* ===========================
-   MARK AS READ
-=========================== */
+/*
+ * Mark notifications as read AFTER retrieving them.
+ *
+ * This allows the current page to still show NEW.
+ */
 
 $sql = "
     UPDATE notifications
+
     SET is_read = 1
+
     WHERE user_id = ?
 ";
+
 
 $stmt =
     mysqli_prepare($conn, $sql);
@@ -114,13 +126,16 @@ content="width=device-width, initial-scale=1.0">
 
 <title>Notifications | FindIt</title>
 
+
 <link
 href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 rel="stylesheet">
 
+
 <link
 rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
 
 <link
 rel="stylesheet"
@@ -243,6 +258,14 @@ body {
 
 }
 
+.icon-completed {
+
+    background: #dcfce7;
+
+    color: #15803d;
+
+}
+
 .notification-title {
 
     font-size: 17px;
@@ -327,10 +350,7 @@ body {
 
 <body>
 
-
-<?php
-include "../includes/student_navbar.php";
-?>
+<?php include "../includes/student_navbar.php"; ?>
 
 
 <section class="notifications-section">
@@ -354,13 +374,10 @@ include "../includes/student_navbar.php";
 </p>
 
 
-<?php if (count($notifications) > 0) { ?>
+<?php if (count($notifications) > 0): ?>
 
 
-    <?php foreach (
-        $notifications
-        as $notification
-    ) { ?>
+    <?php foreach ($notifications as $notification): ?>
 
 
         <?php
@@ -377,28 +394,77 @@ include "../includes/student_navbar.php";
         $reporter_id =
             (int)$notification['reporter_id'];
 
+        $claimant_id =
+            (int)$notification['claimant_id'];
+
+
         $is_claim_notification =
-            !empty($notification['claim_id']);
+            !empty(
+                $notification['claim_id']
+            );
 
-        ?>
-
-
-        <?php
 
         /*
-         * Determine icon/style from
-         * the notification message.
+         * Determine notification appearance.
          */
 
         if (
             stripos(
                 $message,
-                'approved'
+                'successfully handed over'
             ) !== false
         ) {
 
-            $card_class =
-                'approved';
+            $icon_class =
+                'icon-completed';
+
+            $icon =
+                'fa-handshake';
+
+            $title =
+                'Handover Completed';
+
+
+        } elseif (
+            stripos(
+                $message,
+                'accepted the handover'
+            ) !== false
+        ) {
+
+            $icon_class =
+                'icon-approved';
+
+            $icon =
+                'fa-circle-check';
+
+            $title =
+                'Handover Accepted';
+
+
+        } elseif (
+            stripos(
+                $message,
+                'handover meeting has been scheduled'
+            ) !== false
+        ) {
+
+            $icon_class =
+                'icon-claim';
+
+            $icon =
+                'fa-calendar-check';
+
+            $title =
+                'Handover Meeting Scheduled';
+
+
+        } elseif (
+            stripos(
+                $message,
+                'approved'
+            ) !== false
+        ) {
 
             $icon_class =
                 'icon-approved';
@@ -409,15 +475,13 @@ include "../includes/student_navbar.php";
             $title =
                 'Claim Approved';
 
+
         } elseif (
             stripos(
                 $message,
                 'rejected'
             ) !== false
         ) {
-
-            $card_class =
-                'rejected';
 
             $icon_class =
                 'icon-rejected';
@@ -428,85 +492,25 @@ include "../includes/student_navbar.php";
             $title =
                 'Claim Rejected';
 
+
         } elseif (
-    stripos(
-        $message,
-        'claim'
-    ) !== false
-) {
+            stripos(
+                $message,
+                'claim'
+            ) !== false
+        ) {
 
-    /*
-     * This notification was created
-     * when the claim was submitted.
-     *
-     * If the claim is still Pending,
-     * show it as a new request.
-     *
-     * If it has already been processed,
-     * keep the notification as history
-     * but show that it was reviewed.
-     */
+            $icon_class =
+                'icon-claim';
 
-    if ($claim_status === "Pending") {
+            $icon =
+                'fa-hand-holding-heart';
 
-        $card_class = '';
+            $title =
+                'Claim Notification';
 
-        $icon_class =
-            'icon-claim';
 
-        $icon =
-            'fa-hand-holding-heart';
-
-        $title =
-            'New Claim Request';
-
-    } elseif ($claim_status === "Approved") {
-
-        $card_class =
-            'approved';
-
-        $icon_class =
-            'icon-approved';
-
-        $icon =
-            'fa-circle-check';
-
-        $title =
-            'Claim Request Reviewed';
-
-    } elseif ($claim_status === "Rejected") {
-
-        $card_class =
-            'rejected';
-
-        $icon_class =
-            'icon-rejected';
-
-        $icon =
-            'fa-circle-xmark';
-
-        $title =
-            'Claim Request Reviewed';
-
-    } else {
-
-        $card_class = '';
-
-        $icon_class =
-            'icon-default';
-
-        $icon =
-            'fa-bell';
-
-        $title =
-            'Notification';
-
-    }
-
-} else {
-
-            $card_class =
-                '';
+        } else {
 
             $icon_class =
                 'icon-default';
@@ -522,9 +526,8 @@ include "../includes/student_navbar.php";
         ?>
 
 
-        <div
-        class="notification-card
-        <?php echo $card_class; ?>">
+        <div class="notification-card">
+
 
             <div
             class="d-flex
@@ -534,215 +537,124 @@ include "../includes/student_navbar.php";
 
                 <div
                 class="notification-icon
-                <?php echo $icon_class; ?>">
+                <?= $icon_class ?>">
 
                     <i
                     class="fa-solid
-                    <?php echo $icon; ?>">
+                    <?= $icon ?>">
                     </i>
 
                 </div>
 
 
-                <div
-                class="flex-grow-1">
+                <div class="flex-grow-1">
 
 
-                    <div
-                    class="notification-title">
+                    <div class="notification-title">
 
-                        <?php
-                        echo htmlspecialchars(
+                        <?= htmlspecialchars(
                             $title
-                        );
-                        ?>
+                        ) ?>
 
                     </div>
 
 
-                    <div
-class="notification-text">
+                    <div class="notification-text">
 
-    <?php
-    echo htmlspecialchars(
-        $message
-    );
-    ?>
+                        <?= htmlspecialchars(
+                            $message
+                        ) ?>
 
-</div>
+                    </div>
 
 
-<?php if (
-    $is_claim_notification &&
-    $reporter_id === (int)$user_id &&
-    $claim_status !== "Pending"
-) { ?>
-
-    <div class="mt-2">
-
-        <?php if ($claim_status === "Approved") { ?>
-
-            <span class="badge bg-success">
-
-                <i class="fa-solid fa-check"></i>
-
-                Claim Approved
-
-            </span>
-
-        <?php } elseif ($claim_status === "Rejected") { ?>
-
-            <span class="badge bg-danger">
-
-                <i class="fa-solid fa-xmark"></i>
-
-                Claim Rejected
-
-            </span>
-
-        <?php } ?>
-
-    </div>
-
-<?php } ?>
-
-
-                    <div
-                    class="notification-time">
+                    <div class="notification-time">
 
                         <i
                         class="fa-regular
                         fa-clock">
                         </i>
 
-                        <?php
-                        echo htmlspecialchars(
+                        <?= htmlspecialchars(
                             $notification['created_at']
-                        );
-                        ?>
+                        ) ?>
 
                     </div>
 
 
-                   <?php
+                    <!-- ===========================
+                         CLAIM ACTION
+                    ============================ -->
 
-/*
- * Claim notification action
- *
- * Reporter can open the claim:
- *
- * Pending   -> View Claim Request
- * Approved  -> View Claim Details
- * Rejected  -> View Claim Details
- * Completed -> View Claim Details
- */
+                    <?php if (
+                        $is_claim_notification &&
+                        (
+                            $reporter_id === $user_id ||
+                            $claimant_id === $user_id
+                        )
+                    ): ?>
 
-if (
-    $is_claim_notification &&
-    $reporter_id === (int)$user_id
-) {
 
-?>
+                        <a
+                            href="claim_details.php?id=<?= $claim_id ?>"
+                            class="btn btn-primary notification-btn mt-3">
 
-    <a
-        href="claim_details.php?id=<?php
-            echo $claim_id;
-        ?>"
-        class="
-        btn
-        <?php
-        echo ($claim_status === "Pending")
-            ? "btn-primary"
-            : "btn-success";
-        ?>
-        notification-btn
-        mt-3">
+                            <i
+                                class="fa-solid
+                                fa-eye
+                                me-1">
+                            </i>
 
-        <i
-            class="fa-solid
-            <?php
-            echo ($claim_status === "Pending")
-                ? "fa-eye"
-                : "fa-handshake";
-            ?>">
-        </i>
+                            View Claim & Handover
 
-        <?php
+                        </a>
 
-        if ($claim_status === "Pending") {
 
-            echo "View Claim Request";
-
-        } elseif ($claim_status === "Approved") {
-
-            echo "View Claim & Handover";
-
-        } elseif ($claim_status === "Completed") {
-
-            echo "View Claim Details";
-
-        } elseif ($claim_status === "Rejected") {
-
-            echo "View Claim Details";
-
-        } else {
-
-            echo "View Claim Details";
-
-        }
-
-        ?>
-
-    </a>
-
-<?php } ?>
+                    <?php endif; ?>
 
 
                 </div>
 
 
-                <?php
-
-                if (
+                <?php if (
                     !$notification['is_read']
-                ) {
+                ): ?>
 
-                ?>
-
-                    <span
-                    class="new-label">
+                    <span class="new-label">
 
                         NEW
 
                     </span>
 
-                <?php } ?>
+                <?php endif; ?>
 
 
             </div>
 
+
         </div>
 
 
-    <?php } ?>
+    <?php endforeach; ?>
 
 
-<?php } else { ?>
+<?php else: ?>
 
 
-    <div
-    class="empty-notifications">
+    <div class="empty-notifications">
 
         <i
         class="fa-regular
         fa-bell-slash">
         </i>
 
+
         <h4>
 
             No Notifications
 
         </h4>
+
 
         <p class="text-muted">
 
@@ -753,13 +665,12 @@ if (
     </div>
 
 
-<?php } ?>
+<?php endif; ?>
 
 
 </div>
 
 </section>
-
 
 </body>
 
