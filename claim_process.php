@@ -4,6 +4,7 @@ session_start();
 
 include "config/database.php";
 
+
 /* ===========================
    CHECK LOGIN
 =========================== */
@@ -28,11 +29,12 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 }
 
 
+$user_id = $_SESSION['user_id'];
+
+
 /* ===========================
    GET FORM DATA
 =========================== */
-
-$user_id = $_SESSION['user_id'];
 
 $item_id = isset($_POST['item_id'])
     ? (int) $_POST['item_id']
@@ -62,14 +64,22 @@ if (
 
 
 /* ===========================
-   GET USER'S UNIVERSITY
+   GET USER UNIVERSITY
 =========================== */
 
-$sql = "SELECT university_ref_id
-        FROM users
-        WHERE id = ?";
+$sql = "
+    SELECT university_ref_id
+    FROM users
+    WHERE id = ?
+";
 
 $stmt = mysqli_prepare($conn, $sql);
+
+if (!$stmt) {
+
+    die("Database error: " . mysqli_error($conn));
+
+}
 
 mysqli_stmt_bind_param(
     $stmt,
@@ -86,7 +96,10 @@ $user = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);
 
 
-if (!$user || empty($user['university_ref_id'])) {
+if (
+    !$user ||
+    empty($user['university_ref_id'])
+) {
 
     header("Location: message.php?action=invalid_university");
     exit();
@@ -97,13 +110,21 @@ $university_id = $user['university_ref_id'];
 
 
 /* ===========================
-   CHECK FOUND ITEM
+   GET FOUND ITEM
 =========================== */
 
-$sql = "SELECT id, user_id, status, university_ref_id
-        FROM found_items
-        WHERE id = ?
-        AND university_ref_id = ?";
+$sql = "
+    SELECT
+        id,
+        user_id,
+        item_name,
+        status,
+        university_ref_id
+    FROM found_items
+    WHERE
+        id = ?
+        AND university_ref_id = ?
+";
 
 $stmt = mysqli_prepare($conn, $sql);
 
@@ -135,7 +156,10 @@ if (!$item) {
    OWNER CANNOT CLAIM
 =========================== */
 
-if ($item['user_id'] == $user_id) {
+if (
+    (int)$item['user_id'] ===
+    (int)$user_id
+) {
 
     header("Location: message.php?action=own_item");
     exit();
@@ -156,14 +180,18 @@ if ($item['status'] !== "Available") {
 
 
 /* ===========================
-   CHECK EXISTING CLAIM
+   CHECK EXISTING ACTIVE CLAIM
 =========================== */
 
-$sql = "SELECT id
-        FROM claims
-        WHERE item_id = ?
+$sql = "
+    SELECT id
+    FROM claims
+    WHERE
+        item_id = ?
         AND item_type = 'Found'
-        AND user_id = ?";
+        AND user_id = ?
+        AND status IN ('Pending', 'Approved')
+";
 
 $stmt = mysqli_prepare($conn, $sql);
 
@@ -202,15 +230,22 @@ if (
     $_FILES['proof_image']['error'] === UPLOAD_ERR_OK
 ) {
 
-    $file_name = $_FILES['proof_image']['name'];
+    $file_name =
+        $_FILES['proof_image']['name'];
 
-    $file_tmp = $_FILES['proof_image']['tmp_name'];
+    $file_tmp =
+        $_FILES['proof_image']['tmp_name'];
 
-    $file_size = $_FILES['proof_image']['size'];
+    $file_size =
+        $_FILES['proof_image']['size'];
 
-    $file_ext = strtolower(
-        pathinfo($file_name, PATHINFO_EXTENSION)
-    );
+    $file_ext =
+        strtolower(
+            pathinfo(
+                $file_name,
+                PATHINFO_EXTENSION
+            )
+        );
 
 
     $allowed_extensions = [
@@ -220,60 +255,82 @@ if (
     ];
 
 
-    /* Check file type */
+    if (
+        !in_array(
+            $file_ext,
+            $allowed_extensions
+        )
+    ) {
 
-    if (!in_array($file_ext, $allowed_extensions)) {
+        header(
+            "Location: message.php?action=invalid_proof"
+        );
 
-        header("Location: message.php?action=invalid_proof");
         exit();
 
     }
 
 
-    /* Maximum 5 MB */
+    if (
+        $file_size >
+        5 * 1024 * 1024
+    ) {
 
-    if ($file_size > 5 * 1024 * 1024) {
+        header(
+            "Location: message.php?action=proof_too_large"
+        );
 
-        header("Location: message.php?action=proof_too_large");
         exit();
 
     }
 
-
-    /* Create unique filename */
 
     $new_file_name =
-        time() . "_" . uniqid() . "." . $file_ext;
+        time() .
+        "_" .
+        uniqid() .
+        "." .
+        $file_ext;
 
 
-    $upload_dir = "uploads/claim_proofs/";
+    $upload_dir =
+        "uploads/claim_proofs/";
 
-
-    /* Create folder if it doesn't exist */
 
     if (!is_dir($upload_dir)) {
 
-        mkdir($upload_dir, 0755, true);
+        mkdir(
+            $upload_dir,
+            0755,
+            true
+        );
 
     }
 
 
     $destination =
-        $upload_dir . $new_file_name;
+        $upload_dir .
+        $new_file_name;
 
 
-    if (!move_uploaded_file(
-        $file_tmp,
-        $destination
-    )) {
+    if (
+        !move_uploaded_file(
+            $file_tmp,
+            $destination
+        )
+    ) {
 
-        header("Location: message.php?action=proof_upload_failed");
+        header(
+            "Location: message.php?action=proof_upload_failed"
+        );
+
         exit();
 
     }
 
 
-    $proof_image = $new_file_name;
+    $proof_image =
+        $new_file_name;
 
 }
 
@@ -282,20 +339,30 @@ if (
    INSERT CLAIM
 =========================== */
 
-$sql = "INSERT INTO claims
-(
-    item_id,
-    item_type,
-    user_id,
-    claim_reason,
-    proof_image,
-    status
-)
-VALUES (?, ?, ?, ?, ?, 'Pending')";
-
+$sql = "
+    INSERT INTO claims
+    (
+        item_id,
+        item_type,
+        user_id,
+        claim_reason,
+        proof_image,
+        status
+    )
+    VALUES
+    (?, ?, ?, ?, ?, 'Pending')
+";
 
 $stmt = mysqli_prepare($conn, $sql);
 
+if (!$stmt) {
+
+    die(
+        "Claim prepare error: " .
+        mysqli_error($conn)
+    );
+
+}
 
 mysqli_stmt_bind_param(
     $stmt,
@@ -308,20 +375,97 @@ mysqli_stmt_bind_param(
 );
 
 
-if (mysqli_stmt_execute($stmt)) {
+if (!mysqli_stmt_execute($stmt)) {
 
     mysqli_stmt_close($stmt);
 
-    header("Location: message.php?action=claim_success");
-    exit();
+    header(
+        "Location: message.php?action=claim_failed"
+    );
 
-} else {
-
-    mysqli_stmt_close($stmt);
-
-    header("Location: message.php?action=claim_failed");
     exit();
 
 }
+
+
+/* ===========================
+   GET NEW CLAIM ID
+=========================== */
+
+$claim_id =
+    mysqli_insert_id($conn);
+
+mysqli_stmt_close($stmt);
+
+
+/* ===========================
+   CREATE REPORTER NOTIFICATION
+=========================== */
+
+$reporter_id =
+    (int)$item['user_id'];
+
+$message =
+    'Someone has submitted a claim for your found item "' .
+    $item['item_name'] .
+    '".';
+
+
+$sql = "
+    INSERT INTO notifications
+    (
+        user_id,
+        claim_id,
+        message,
+        is_read
+    )
+    VALUES
+    (?, ?, ?, 0)
+";
+
+$stmt = mysqli_prepare($conn, $sql);
+
+if (!$stmt) {
+
+    die(
+        "Notification prepare error: " .
+        mysqli_error($conn)
+    );
+
+}
+
+mysqli_stmt_bind_param(
+    $stmt,
+    "iis",
+    $reporter_id,
+    $claim_id,
+    $message
+);
+
+
+if (!mysqli_stmt_execute($stmt)) {
+
+    mysqli_stmt_close($stmt);
+
+    header(
+        "Location: message.php?action=claim_failed"
+    );
+
+    exit();
+
+}
+
+mysqli_stmt_close($stmt);
+
+
+/* ===========================
+   SUCCESS
+=========================== */
+
+header(
+    "Location: message.php?action=claim_success"
+);
+
+exit();
 
 ?>

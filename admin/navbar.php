@@ -85,7 +85,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
                     <a
                         class="nav-link"
-                        href="claims.php">
+                        href="#">
 
                         Manage Claims
 
