@@ -5,7 +5,16 @@ session_start();
 
 if (!isset($_SESSION['user_id'])) {
 
-    header("Location: ../login.php");
+    $current_url =
+        "student/item_details.php"
+        . "?id=" . urlencode($_GET['id'])
+        . "&type=" . urlencode($_GET['type']);
+
+    header(
+        "Location: ../login.php?redirect="
+        . urlencode($current_url)
+    );
+
     exit();
 
 }
@@ -86,6 +95,14 @@ if (
 
 $item_id = (int)$_GET['id'];
 $item_type = $_GET['type'];
+/* ===========================
+   QR CODE URL
+=========================== */
+
+$qr_url =
+    "http://192.168.0.127/FindIt-Campus-Lost-and-Found/student/item_details.php"
+    . "?id=" . $item_id
+    . "&type=" . urlencode($item_type);
 
 
 /* Only Lost or Found is allowed */
@@ -977,7 +994,55 @@ body {
     }
 
 }
+.qr-section {
 
+    margin-top: 30px;
+
+    padding: 25px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+}
+
+.qr-section h5 {
+
+    font-weight: 700;
+
+    color: #0f172a;
+
+    margin-bottom: 10px;
+
+}
+
+.qr-section p {
+
+    color: #64748b;
+
+    margin-bottom: 20px;
+
+}
+
+.qr-image {
+
+    width: 220px;
+
+    height: 220px;
+
+    padding: 10px;
+
+    background: white;
+
+    border-radius: 12px;
+
+    border: 1px solid #e2e8f0;
+
+}
 </style>
 
 </head>
@@ -1201,6 +1266,37 @@ echo nl2br(
 ?>
 
 </p>
+
+</div>
+<!-- ===========================
+     QR CODE
+=========================== -->
+
+<div class="qr-section">
+
+    <h5>
+
+        <i class="fa-solid fa-qrcode text-primary me-1"></i>
+
+        Item QR Code
+
+    </h5>
+
+    <p>
+
+        Scan this QR code to open this item's details.
+
+    </p>
+
+    <img
+
+        src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=<?= urlencode($qr_url) ?>"
+
+        class="qr-image"
+
+        alt="Item QR Code"
+
+    >
 
 </div>
 

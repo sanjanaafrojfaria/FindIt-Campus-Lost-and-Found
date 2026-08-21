@@ -1,6 +1,8 @@
 <?php
+
 include 'config/database.php';
- include 'includes/navbar.php'; 
+include 'includes/navbar.php';
+
 ?>
 
 <!DOCTYPE html>
@@ -10,16 +12,26 @@ include 'config/database.php';
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Login | FindIt</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <link rel="stylesheet" href="assets/css/login.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link
+        rel="stylesheet"
+        href="assets/css/login.css">
+
+    <link
+        rel="stylesheet"
+        href="assets/css/style.css">
 
 </head>
 
@@ -29,8 +41,6 @@ include 'config/database.php';
 
     <div class="register-card">
 
-        
-
         <h2>Welcome Back!</h2>
 
         <p class="subtitle">
@@ -38,81 +48,129 @@ include 'config/database.php';
             Sign in to continue to your FindIt account.
 
         </p>
+
+
         <form action="login_process.php" method="POST">
 
-        <div class="row">
 
-    
-    <div class=" mb-3">
-        <label>Email</label>
-        <input type="email"
-               class="form-control"
-               name="email"
-               placeholder="Enter your email"
-               required>
-    </div>
+            <!-- ===========================
+                 REMEMBER WHERE USER CAME FROM
+            =========================== -->
 
-    <div class=" mb-3">
+            <?php if (isset($_GET['redirect'])) { ?>
 
-        <label>Password</label>
+                <input
+                    type="hidden"
+                    name="redirect"
+                    value="<?= htmlspecialchars($_GET['redirect']) ?>"
+                >
 
-        <input type="password"
-               class="form-control"
-               name="password"
-               placeholder="Enter your password"
-               required>
+            <?php } ?>
 
-    </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="row">
 
-    <div class="form-check">
 
-        <input class="form-check-input"
-               type="checkbox"
-               id="remember">
+                <!-- EMAIL -->
 
-        <label class="form-check-label"
-               for="remember">
+                <div class="mb-3">
 
-            Remember Me
+                    <label>Email</label>
 
-        </label>
+                    <input
+                        type="email"
+                        class="form-control"
+                        name="email"
+                        placeholder="Enter your email"
+                        required
+                    >
 
-    </div>
+                </div>
 
-    <a href="#" class="forgot-link">
 
-        Forgot Password?
+                <!-- PASSWORD -->
 
-    </a>
+                <div class="mb-3">
 
-</div>
+                    <label>Password</label>
 
-</div>
+                    <input
+                        type="password"
+                        class="form-control"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                    >
 
-<div class="d-grid">
+                </div>
 
-    <button class="btn btn-primary btn-lg">
 
-        Sign In
+                <!-- REMEMBER / FORGOT -->
 
-    </button>
+                <div class="d-flex justify-content-between align-items-center mb-4">
 
-</div>
+                    <div class="form-check">
 
-        <div class="login-link">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="remember"
+                        >
 
-            Don't have an account?
+                        <label
+                            class="form-check-label"
+                            for="remember">
 
-            <a href="register.php">Register</a>
+                            Remember Me
 
-        </div>
+                        </label>
+
+                    </div>
+
+
+                    <a href="#" class="forgot-link">
+
+                        Forgot Password?
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOGIN BUTTON -->
+
+            <div class="d-grid">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-lg">
+
+                    Sign In
+
+                </button>
+
+            </div>
+
+
+            <!-- REGISTER -->
+
+            <div class="login-link">
+
+                Don't have an account?
+
+                <a href="register.php">Register</a>
+
+            </div>
+
+
         </form>
 
     </div>
 
 </div>
+
 
 <script src="assets/js/register.js"></script>
 
