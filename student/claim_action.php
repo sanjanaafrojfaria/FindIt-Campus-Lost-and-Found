@@ -486,13 +486,52 @@ if ($action === "reject") {
 
 
         /* ===========================
+           REDUCE CLAIMANT TRUST SCORE
+        =========================== */
+
+        $sql = "
+            UPDATE users
+
+            SET trust_score = trust_score - 1
+
+            WHERE id = ?
+        ";
+
+        $stmt = mysqli_prepare($conn, $sql);
+
+        if (!$stmt) {
+
+            throw new Exception(
+                "Could not prepare trust score update."
+            );
+
+        }
+
+        mysqli_stmt_bind_param(
+            $stmt,
+            "i",
+            $claim['claimant_id']
+        );
+
+        if (!mysqli_stmt_execute($stmt)) {
+
+            throw new Exception(
+                "Could not update trust score."
+            );
+
+        }
+
+        mysqli_stmt_close($stmt);
+
+
+        /* ===========================
            NOTIFY CLAIMANT
         =========================== */
 
         $message =
             'Your claim for the found item "' .
             $claim['item_name'] .
-            '" has been rejected.';
+            '" has been rejected. Your trust score has been reduced by 1.';
 
 
         $sql = "
