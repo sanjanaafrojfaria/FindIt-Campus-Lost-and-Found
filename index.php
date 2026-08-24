@@ -10,10 +10,14 @@ include "config/database.php";
 =========================== */
 
 $lost_query = "
-    SELECT *
-    FROM lost_items
-    WHERE status = 'Open'
-    ORDER BY created_at DESC
+    SELECT 
+        l.*,
+        u.name AS university_name
+    FROM lost_items l
+    LEFT JOIN universities u 
+        ON l.university_ref_id = u.id
+    WHERE l.status = 'Open'
+    ORDER BY l.created_at DESC
     LIMIT 6
 ";
 
@@ -25,10 +29,14 @@ $lost_result = mysqli_query($conn, $lost_query);
 =========================== */
 
 $found_query = "
-    SELECT *
-    FROM found_items
-    WHERE status = 'Available'
-    ORDER BY created_at DESC
+    SELECT 
+        f.*,
+        u.name AS university_name
+    FROM found_items f
+    LEFT JOIN universities u 
+        ON f.university_ref_id = u.id
+    WHERE f.status = 'Available'
+    ORDER BY f.created_at DESC
     LIMIT 6
 ";
 
@@ -307,7 +315,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
                         </p>
 
-
+                        <p>
+    <i class="fa-solid fa-building-columns"></i>
+    <?= htmlspecialchars($item['university_name'] ?? 'University not available') ?>
+</p>
                         <small>
 
                             <i class="fa-regular fa-calendar"></i>
@@ -457,7 +468,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
                         </p>
 
-
+        <p>
+    <i class="fa-solid fa-building-columns"></i>
+    <?= htmlspecialchars($item['university_name'] ?? 'University not available') ?>
+</p>
                         <small>
 
                             <i class="fa-regular fa-calendar"></i>
