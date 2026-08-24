@@ -92,6 +92,28 @@ if (session_status() === PHP_SESSION_NONE) {
                     </a>
 
                 </li>
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="lost_reports.php">
+
+                        Lost Reports
+
+                    </a>
+
+                </li>
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="found_reports.php">
+
+                        Found Reports
+
+                    </a>
+
+                </li>
 
 
                 <!-- ADMIN NAME -->

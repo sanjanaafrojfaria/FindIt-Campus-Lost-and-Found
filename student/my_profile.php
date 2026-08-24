@@ -3,13 +3,15 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
+
     header("Location: ../login.php");
     exit();
+
 }
 
 include "../config/database.php";
 
-$user_id = $_SESSION['user_id'];
+$user_id = (int) $_SESSION['user_id'];
 
 
 /* ===========================
@@ -36,10 +38,16 @@ $sql = "
 $stmt = mysqli_prepare($conn, $sql);
 
 if (!$stmt) {
+
     die("Database Error: " . mysqli_error($conn));
+
 }
 
-mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_bind_param(
+    $stmt,
+    "i",
+    $user_id
+);
 
 mysqli_stmt_execute($stmt);
 
@@ -55,7 +63,9 @@ mysqli_stmt_close($stmt);
 =========================== */
 
 if (!$user) {
+
     die("User not found.");
+
 }
 
 
@@ -63,9 +73,22 @@ if (!$user) {
    PROFILE IMAGE
 =========================== */
 
-$profile_image = !empty($user['profile_image'])
-    ? "../uploads/profile/" . htmlspecialchars($user['profile_image'])
-    : "../uploads/profile/default.png";
+if (!empty($user['profile_image'])) {
+
+    $profile_image =
+        "../uploads/profile/"
+        . htmlspecialchars(
+            $user['profile_image'],
+            ENT_QUOTES,
+            'UTF-8'
+        );
+
+} else {
+
+    $profile_image =
+        "../uploads/profile/default.png";
+
+}
 
 
 /* ===========================
@@ -74,14 +97,29 @@ $profile_image = !empty($user['profile_image'])
 
 $trust_score = (int) $user['trust_score'];
 
-if ($trust_score >= 90) {
+
+/*
+ * Trust score is not limited.
+ * It can continue increasing
+ * with successful interactions.
+ */
+
+if ($trust_score >= 5) {
+
     $score_label = "Excellent";
-} elseif ($trust_score >= 75) {
+
+} elseif ($trust_score >= 3) {
+
     $score_label = "Good";
-} elseif ($trust_score >= 50) {
-    $score_label = "Average";
+
+} elseif ($trust_score >= 1) {
+
+    $score_label = "Fair";
+
 } else {
+
     $score_label = "Low";
+
 }
 
 
@@ -96,149 +134,285 @@ $member_since = date(
 
 ?>
 
-
 <!DOCTYPE html>
 
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <title>My Profile | FindIt</title>
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
-
-    <!-- FindIt CSS -->
-    <link
-        rel="stylesheet"
-        href="../assets/css/style.css"
-    >
-
-    <!-- Font Awesome -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
+<title>My Profile | FindIt</title>
 
 
-    <style>
+<!-- Bootstrap -->
 
-        body {
-            background: #f5f7fb;
-            font-family: Arial, sans-serif;
-        }
+<link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+>
 
-        .profile-container {
-    max-width: 900px;
-    margin: 110px auto 40px;
-    padding: 0 20px;
+
+<!-- FindIt CSS -->
+
+<link
+    rel="stylesheet"
+    href="../assets/css/style.css"
+>
+
+
+<!-- Font Awesome -->
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+>
+
+
+<style>
+
+/* ===========================
+   PAGE
+=========================== */
+
+body {
+
+    background: #f5f7fb;
+
+    font-family: Arial, sans-serif;
+
 }
 
-        .profile-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-        }
 
-        .profile-header {
-            background: linear-gradient(135deg, #6a5acd, #8a63d2);
-            color: white;
-            padding: 35px;
-            text-align: center;
-        }
+/* ===========================
+   PROFILE CONTAINER
+=========================== */
 
-        .profile-image {
-            width: 180px;
-            height: 115px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 4px solid white;
-            background: white;
-            margin-bottom: 15px;
-        }
+.profile-container {
 
-        .profile-header h2 {
-            margin: 5px 0;
-            font-weight: 700;
-        }
+    max-width: 900px;
 
-        .profile-header p {
-            margin: 0;
-            opacity: 0.9;
-        }
+    margin: 110px auto 40px;
 
-        .profile-body {
-            padding: 35px;
-        }
+    padding: 0 20px;
 
-        .info-box {
-            background: #f8f9fc;
-            border-radius: 12px;
-            padding: 18px 20px;
-            margin-bottom: 18px;
-        }
+}
 
-        .info-label {
-            font-size: 13px;
-            color: #777;
-            margin-bottom: 5px;
-        }
 
-        .info-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: #222;
-        }
+/* ===========================
+   PROFILE CARD
+=========================== */
 
-        .trust-score {
-            text-align: center;
-            background: #f8f9fc;
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 10px;
-        }
+.profile-card {
 
-        .score-number {
-            font-size: 42px;
-            font-weight: 700;
-            color: #6a5acd;
-        }
+    background: white;
 
-        .score-label {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
+    border-radius: 20px;
 
-        .progress {
-            height: 10px;
-            border-radius: 10px;
-            background: #e5e5e5;
-        }
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.08);
 
-        .progress-bar {
-            background: #6a5acd;
-            border-radius: 10px;
-        }
+    overflow: hidden;
 
-        .id-card-note {
-            font-size: 12px;
-            color: #777;
-            margin-top: 10px;
-        }
+}
 
-    </style>
+
+/* ===========================
+   PROFILE HEADER
+=========================== */
+
+.profile-header {
+
+    background:
+        linear-gradient(
+            135deg,
+            #6a5acd,
+            #8a63d2
+        );
+
+    color: white;
+
+    padding: 35px;
+
+    text-align: center;
+
+}
+
+
+.profile-image {
+
+    width: 180px;
+
+    height: 115px;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+
+    border: 4px solid white;
+
+    background: white;
+
+    margin-bottom: 15px;
+
+}
+
+
+.profile-header h2 {
+
+    margin: 5px 0;
+
+    font-weight: 700;
+
+}
+
+
+.profile-header p {
+
+    margin: 0;
+
+    opacity: 0.9;
+
+}
+
+
+/* ===========================
+   PROFILE BODY
+=========================== */
+
+.profile-body {
+
+    padding: 35px;
+
+}
+
+
+/* ===========================
+   INFORMATION BOX
+=========================== */
+
+.info-box {
+
+    background: #f8f9fc;
+
+    border-radius: 12px;
+
+    padding: 18px 20px;
+
+    margin-bottom: 18px;
+
+}
+
+
+.info-label {
+
+    font-size: 13px;
+
+    color: #777;
+
+    margin-bottom: 5px;
+
+}
+
+
+.info-value {
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    color: #222;
+
+}
+
+
+/* ===========================
+   TRUST SCORE
+=========================== */
+
+.trust-score {
+
+    text-align: center;
+
+    background: #f8f9fc;
+
+    border-radius: 15px;
+
+    padding: 30px;
+
+    margin-top: 10px;
+
+}
+
+
+.trust-score-icon {
+
+    font-size: 28px;
+
+    color: #f59e0b;
+
+    margin-bottom: 8px;
+
+}
+
+
+.score-number {
+
+    font-size: 42px;
+
+    font-weight: 700;
+
+    color: #6a5acd;
+
+}
+
+
+.score-label {
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    margin-top: 5px;
+
+}
+
+
+/* ===========================
+   TRUST DESCRIPTION
+=========================== */
+
+.trust-description {
+
+    font-size: 13px;
+
+    color: #777;
+
+    margin-top: 10px;
+
+}
+
+
+/* ===========================
+   ID CARD NOTE
+=========================== */
+
+.id-card-note {
+
+    font-size: 12px;
+
+    color: #777;
+
+    margin-top: 15px;
+
+}
+
+</style>
 
 </head>
 
@@ -249,15 +423,17 @@ $member_since = date(
 <?php include "../includes/student_navbar.php"; ?>
 
 
-
 <div class="profile-container">
 
     <div class="profile-card">
 
 
-        <!-- PROFILE HEADER -->
+        <!-- ===========================
+             PROFILE HEADER
+        =========================== -->
 
         <div class="profile-header">
+
 
             <img
                 src="<?= $profile_image ?>"
@@ -265,20 +441,34 @@ $member_since = date(
                 class="profile-image"
             >
 
+
             <h2>
-                <?= htmlspecialchars($user['full_name']) ?>
+
+                <?= htmlspecialchars(
+                    $user['full_name'],
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
+
             </h2>
 
+
             <p>
+
                 FindIt Member
+
             </p>
+
 
         </div>
 
 
-        <!-- PROFILE INFORMATION -->
+        <!-- ===========================
+             PROFILE INFORMATION
+        =========================== -->
 
         <div class="profile-body">
+
 
             <div class="row">
 
@@ -290,11 +480,19 @@ $member_since = date(
                     <div class="info-box">
 
                         <div class="info-label">
+
                             Full Name
+
                         </div>
 
                         <div class="info-value">
-                            <?= htmlspecialchars($user['full_name']) ?>
+
+                            <?= htmlspecialchars(
+                                $user['full_name'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+
                         </div>
 
                     </div>
@@ -309,11 +507,19 @@ $member_since = date(
                     <div class="info-box">
 
                         <div class="info-label">
+
                             University ID
+
                         </div>
 
                         <div class="info-value">
-                            <?= htmlspecialchars($user['university_id']) ?>
+
+                            <?= htmlspecialchars(
+                                $user['university_id'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+
                         </div>
 
                     </div>
@@ -328,13 +534,21 @@ $member_since = date(
                     <div class="info-box">
 
                         <div class="info-label">
+
                             University
+
                         </div>
 
                         <div class="info-value">
 
                             <?= !empty($user['university_name'])
-                                ? htmlspecialchars($user['university_name'])
+
+                                ? htmlspecialchars(
+                                    $user['university_name'],
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                )
+
                                 : "Not available"
                             ?>
 
@@ -352,11 +566,19 @@ $member_since = date(
                     <div class="info-box">
 
                         <div class="info-label">
+
                             Department
+
                         </div>
 
                         <div class="info-value">
-                            <?= htmlspecialchars($user['department']) ?>
+
+                            <?= htmlspecialchars(
+                                $user['department'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+
                         </div>
 
                     </div>
@@ -371,11 +593,19 @@ $member_since = date(
                     <div class="info-box">
 
                         <div class="info-label">
+
                             Email
+
                         </div>
 
                         <div class="info-value">
-                            <?= htmlspecialchars($user['email']) ?>
+
+                            <?= htmlspecialchars(
+                                $user['email'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+
                         </div>
 
                     </div>
@@ -390,13 +620,21 @@ $member_since = date(
                     <div class="info-box">
 
                         <div class="info-label">
+
                             Phone
+
                         </div>
 
                         <div class="info-value">
 
                             <?= !empty($user['phone'])
-                                ? htmlspecialchars($user['phone'])
+
+                                ? htmlspecialchars(
+                                    $user['phone'],
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                )
+
                                 : "Not provided"
                             ?>
 
@@ -414,55 +652,87 @@ $member_since = date(
                     <div class="info-box">
 
                         <div class="info-label">
+
                             Member Since
+
                         </div>
 
                         <div class="info-value">
-                            <?= htmlspecialchars($member_since) ?>
+
+                            <?= htmlspecialchars(
+                                $member_since,
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+
                         </div>
 
                     </div>
 
                 </div>
 
+
             </div>
 
 
-            <!-- TRUST SCORE -->
+            <!-- ===========================
+                 TRUST SCORE
+            =========================== -->
 
             <div class="trust-score">
 
-                <div class="info-label">
-                    Trust Score
+
+                <div class="trust-score-icon">
+
+                    <i class="fa-solid fa-star"></i>
+
                 </div>
+
+
+                <div class="info-label">
+
+                    Trust Score
+
+                </div>
+
 
                 <div class="score-number">
-                    <?= $trust_score ?>/100
+
+                    <?= $trust_score ?>
+
                 </div>
+
 
                 <div class="score-label">
-                    <?= htmlspecialchars($score_label) ?>
-                </div>
 
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        role="progressbar"
-                        style="width: <?= min($trust_score, 100) ?>%;"
-                        aria-valuenow="<?= $trust_score ?>"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                    ></div>
+                    <?= htmlspecialchars(
+                        $score_label,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>
 
                 </div>
+
+
+                <div class="trust-description">
+
+                    Your trust score increases through
+                    successful interactions on FindIt.
+
+                </div>
+
 
             </div>
 
 
+            <!-- ===========================
+                 ID CARD NOTE
+            =========================== -->
+
             <div class="text-center id-card-note">
 
-                Your university ID card is used for account verification.
+                Your university ID card is used
+                for account verification.
 
             </div>
 

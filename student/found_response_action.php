@@ -1,4 +1,3 @@
-
 <?php
 
 session_start();
@@ -16,10 +15,10 @@ $user_id = (int)$_SESSION['user_id'];
 
 
 /* ===========================
-   CHECK REQUEST
+   VALIDATE REQUEST
 =========================== */
 
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
     header("Location: notifications.php");
     exit();
@@ -27,16 +26,10 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 }
 
 
-$response_id = isset($_POST['response_id'])
-    ? (int)$_POST['response_id']
-    : 0;
-
-$action = $_POST['action'] ?? '';
-
-
 if (
-    $response_id <= 0 ||
-    !in_array($action, ['accept', 'reject', 'mark_found'])
+    !isset($_POST['response_id']) ||
+    !is_numeric($_POST['response_id']) ||
+    !isset($_POST['action'])
 ) {
 
     header("Location: notifications.php");
@@ -45,22 +38,52 @@ if (
 }
 
 
+$response_id = (int)$_POST['response_id'];
+$action = $_POST['action'];
+
+
+if ($response_id <= 0) {
+
+    header("Location: notifications.php");
+    exit();
+
+}
+
+
 /* ===========================
-   GET RESPONSE + LOST ITEM
+   ALLOWED ACTIONS
+=========================== */
+
+$allowed_actions = [
+    'accept',
+    'reject',
+    'mark_found'
+];
+
+
+if (!in_array($action, $allowed_actions, true)) {
+
+    header("Location: notifications.php");
+    exit();
+
+}
+
+
+/* ===========================
+   GET RESPONSE
 =========================== */
 
 $sql = "
     SELECT
 
         fr.id,
-        fr.status,
-        fr.finder_id,
-
         fr.lost_item_id,
+        fr.finder_id,
+        fr.status AS response_status,
 
         l.user_id AS reporter_id,
-        l.item_name,
-        l.status AS item_status
+        l.status AS lost_item_status,
+        l.item_name
 
     FROM found_responses fr
 
@@ -79,11 +102,13 @@ if (!$stmt) {
 
 }
 
+
 mysqli_stmt_bind_param(
     $stmt,
     "i",
     $response_id
 );
+
 
 mysqli_stmt_execute($stmt);
 
@@ -94,6 +119,10 @@ $response = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);
 
 
+/* ===========================
+   RESPONSE NOT FOUND
+=========================== */
+
 if (!$response) {
 
     header("Location: notifications.php");
@@ -102,31 +131,50 @@ if (!$response) {
 }
 
 
+$reporter_id =
+    (int)$response['reporter_id'];
+
+$finder_id =
+    (int)$response['finder_id'];
+
+$lost_item_id =
+    (int)$response['lost_item_id'];
+
+$response_status =
+    $response['response_status'];
+
+$lost_item_status =
+    strtolower(
+        trim(
+            $response['lost_item_status'] ?? ''
+        )
+    );
+
+
 /* ===========================
-   ONLY REPORTER CAN ACT
+   ACCEPT RESPONSE
 =========================== */
 
-if (
-    (int)$response['reporter_id']
-    !==
-    $user_id
-) {
-
-    header("Location: notifications.php");
-    exit();
-
-}
+if ($action === 'accept') {
 
 
-/* ==================================================
-   MARK LOST ITEM AS FOUND
-================================================== */
+    /*
+     * Only the reporter can accept.
+     */
 
-if ($action === 'mark_found') {
+    if ($reporter_id !== $user_id) {
 
-    /* Response must be accepted */
+        header("Location: notifications.php");
+        exit();
 
-    if ($response['status'] !== 'Accepted') {
+    }
+
+
+    /*
+     * Only Pending responses can be accepted.
+     */
+
+    if ($response_status !== 'Pending') {
 
         header(
             "Location: found_response_details.php?id="
@@ -138,29 +186,18 @@ if ($action === 'mark_found') {
     }
 
 
-    /* Item must still be open */
-
-    if ($response['item_status'] !== 'Open') {
-
-        header(
-            "Location: found_response_details.php?id="
-            . $response_id
-        );
-
-        exit();
-
-    }
-
-
-    /* Update lost item */
+    /* ===========================
+       UPDATE RESPONSE
+    =========================== */
 
     $sql = "
-        UPDATE lost_items
+        UPDATE found_responses
 
-        SET status = 'Found'
+        SET status = 'Accepted'
 
         WHERE id = ?
-        AND user_id = ?
+
+        AND status = 'Pending'
     ";
 
 
@@ -172,35 +209,33 @@ if ($action === 'mark_found') {
 
     }
 
+
     mysqli_stmt_bind_param(
         $stmt,
-        "ii",
-        $response['lost_item_id'],
-        $user_id
+        "i",
+        $response_id
     );
+
 
     mysqli_stmt_execute($stmt);
 
     mysqli_stmt_close($stmt);
 
 
-    /* Notify finder */
+    /* ===========================
+       NOTIFY FINDER
+    =========================== */
 
     $message =
-        "The reporter has marked the lost item \""
+        "The reporter accepted your found response for "
         . $response['item_name']
-        . "\" as Found.";
-
-
-    $finder_id =
-        (int)$response['finder_id'];
+        . ".";
 
 
     $sql = "
         INSERT INTO notifications
         (
             user_id,
-            claim_id,
             found_response_id,
             message,
             is_read,
@@ -208,7 +243,13 @@ if ($action === 'mark_found') {
         )
 
         VALUES
-        (?, NULL, ?, ?, 0, NOW())
+        (
+            ?,
+            ?,
+            ?,
+            0,
+            NOW()
+        )
     ";
 
 
@@ -234,7 +275,6 @@ if ($action === 'mark_found') {
     header(
         "Location: found_response_details.php?id="
         . $response_id
-        . "&found=1"
     );
 
     exit();
@@ -242,13 +282,126 @@ if ($action === 'mark_found') {
 }
 
 
-/* ==================================================
-   ACCEPT / REJECT
-================================================== */
+/* ===========================
+   REJECT RESPONSE
+=========================== */
 
-/* Only Pending response can be accepted/rejected */
+if ($action === 'reject') {
 
-if ($response['status'] !== 'Pending') {
+
+    /*
+     * Only the reporter can reject.
+     */
+
+    if ($reporter_id !== $user_id) {
+
+        header("Location: notifications.php");
+        exit();
+
+    }
+
+
+    /*
+     * Only Pending responses can be rejected.
+     */
+
+    if ($response_status !== 'Pending') {
+
+        header(
+            "Location: found_response_details.php?id="
+            . $response_id
+        );
+
+        exit();
+
+    }
+
+
+    /* ===========================
+       UPDATE RESPONSE
+    =========================== */
+
+    $sql = "
+        UPDATE found_responses
+
+        SET status = 'Rejected'
+
+        WHERE id = ?
+
+        AND status = 'Pending'
+    ";
+
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if (!$stmt) {
+
+        die("Database error.");
+
+    }
+
+
+    mysqli_stmt_bind_param(
+        $stmt,
+        "i",
+        $response_id
+    );
+
+
+    mysqli_stmt_execute($stmt);
+
+    mysqli_stmt_close($stmt);
+
+
+    /* ===========================
+       NOTIFY FINDER
+    =========================== */
+
+    $message =
+        "The reporter rejected your found response for "
+        . $response['item_name']
+        . ".";
+
+
+    $sql = "
+        INSERT INTO notifications
+        (
+            user_id,
+            found_response_id,
+            message,
+            is_read,
+            created_at
+        )
+
+        VALUES
+        (
+            ?,
+            ?,
+            ?,
+            0,
+            NOW()
+        )
+    ";
+
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if ($stmt) {
+
+        mysqli_stmt_bind_param(
+            $stmt,
+            "iis",
+            $finder_id,
+            $response_id,
+            $message
+        );
+
+        mysqli_stmt_execute($stmt);
+
+        mysqli_stmt_close($stmt);
+
+    }
+
 
     header(
         "Location: found_response_details.php?id="
@@ -261,126 +414,185 @@ if ($response['status'] !== 'Pending') {
 
 
 /* ===========================
-   NEW STATUS
+   MARK ITEM AS FOUND
 =========================== */
 
-$new_status =
-    ($action === 'accept')
-    ? 'Accepted'
-    : 'Rejected';
+if ($action === 'mark_found') {
 
 
-/* ===========================
-   UPDATE RESPONSE
+    /*
+     * ONLY THE REPORTER CAN DO THIS.
+     */
+
+    if ($reporter_id !== $user_id) {
+
+        header("Location: notifications.php");
+        exit();
+
+    }
+
+
+    /*
+     * The response MUST already be accepted.
+     */
+
+    if ($response_status !== 'Accepted') {
+
+        header(
+            "Location: found_response_details.php?id="
+            . $response_id
+        );
+
+        exit();
+
+    }
+
+
+    /*
+     * IMPORTANT:
+     *
+     * If the lost item is already Found,
+     * do absolutely nothing.
+     *
+     * This prevents the reporter from
+     * performing the action repeatedly.
+     */
+
+    if ($lost_item_status === 'found') {
+
+        header(
+            "Location: found_response_details.php?id="
+            . $response_id
+        );
+
+        exit();
+
+    }
+
+
+    /* ===========================
+       UPDATE LOST ITEM
 =========================== */
 
-$sql = "
-    UPDATE found_responses
+    $sql = "
+        UPDATE lost_items
 
-    SET status = ?
+        SET status = 'Found'
 
-    WHERE id = ?
-";
+        WHERE id = ?
 
+        AND user_id = ?
 
-$stmt = mysqli_prepare($conn, $sql);
-
-if (!$stmt) {
-
-    die("Database error.");
-
-}
-
-mysqli_stmt_bind_param(
-    $stmt,
-    "si",
-    $new_status,
-    $response_id
-);
-
-mysqli_stmt_execute($stmt);
-
-mysqli_stmt_close($stmt);
+        AND status <> 'Found'
+    ";
 
 
-/* ===========================
-   GET FINDER
-=========================== */
+    $stmt = mysqli_prepare($conn, $sql);
 
-$finder_id =
-    (int)$response['finder_id'];
+    if (!$stmt) {
 
+        die("Database error.");
 
-/* ===========================
-   NOTIFICATION MESSAGE
-=========================== */
+    }
 
-if ($new_status === 'Accepted') {
-
-    $message =
-        "Your response for the lost item \""
-        . $response['item_name']
-        . "\" has been accepted by the reporter.";
-
-} else {
-
-    $message =
-        "Your response for the lost item \""
-        . $response['item_name']
-        . "\" has been rejected by the reporter.";
-
-}
-
-
-/* ===========================
-   NOTIFY FINDER
-=========================== */
-
-$sql = "
-    INSERT INTO notifications
-    (
-        user_id,
-        claim_id,
-        found_response_id,
-        message,
-        is_read,
-        created_at
-    )
-
-    VALUES
-    (?, NULL, ?, ?, 0, NOW())
-";
-
-
-$stmt = mysqli_prepare($conn, $sql);
-
-if ($stmt) {
 
     mysqli_stmt_bind_param(
         $stmt,
-        "iis",
-        $finder_id,
-        $response_id,
-        $message
+        "ii",
+        $lost_item_id,
+        $reporter_id
     );
+
 
     mysqli_stmt_execute($stmt);
 
+    $affected_rows =
+        mysqli_stmt_affected_rows($stmt);
+
     mysqli_stmt_close($stmt);
+
+
+    /*
+     * If nothing was updated, the item
+     * was already Found or unavailable.
+     */
+
+    if ($affected_rows <= 0) {
+
+        header(
+            "Location: found_response_details.php?id="
+            . $response_id
+        );
+
+        exit();
+
+    }
+
+
+    /* ===========================
+       NOTIFY FINDER
+    =========================== */
+
+    $message =
+        "The reporter confirmed that they found their item. "
+        . "The lost item has been marked as Found.";
+
+
+    $sql = "
+        INSERT INTO notifications
+        (
+            user_id,
+            found_response_id,
+            message,
+            is_read,
+            created_at
+        )
+
+        VALUES
+        (
+            ?,
+            ?,
+            ?,
+            0,
+            NOW()
+        )
+    ";
+
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    if ($stmt) {
+
+        mysqli_stmt_bind_param(
+            $stmt,
+            "iis",
+            $finder_id,
+            $response_id,
+            $message
+        );
+
+        mysqli_stmt_execute($stmt);
+
+        mysqli_stmt_close($stmt);
+
+    }
+
+
+    /* ===========================
+       REDIRECT
+=========================== */
+
+    header(
+        "Location: found_response_details.php?id="
+        . $response_id
+    );
+
+    exit();
 
 }
 
 
-/* ===========================
-   REDIRECT
-=========================== */
-
-header(
-    "Location: found_response_details.php?id="
-    . $response_id
-    . "&updated=1"
-);
-
+header("Location: notifications.php");
 exit();
 
 ?>

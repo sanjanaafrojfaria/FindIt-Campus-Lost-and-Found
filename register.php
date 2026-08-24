@@ -156,12 +156,16 @@ include 'includes/navbar.php';
 
                     <label for="phone">Phone Number</label>
 
-                    <input type="text"
-                           id="phone"
-                           class="form-control"
-                           name="phone"
-                           placeholder="01XXXXXXXXX"
-                           required>
+                    <input type="tel"
+       id="phone"
+       class="form-control"
+       name="phone"
+       placeholder="01XXXXXXXXX"
+       maxlength="11"
+       minlength="11"
+       pattern="[0-9]{11}"
+       inputmode="numeric"
+       required>
 
                 </div>
 

@@ -1,4 +1,3 @@
-
 <?php
 
 session_start();
@@ -29,16 +28,29 @@ $sql = "
         n.is_read,
         n.created_at,
 
-        /* CLAIM INFORMATION */
+        /* ===========================
+           CLAIM INFORMATION
+        =========================== */
 
         c.user_id AS claimant_id,
         c.status AS claim_status,
 
         f.id AS item_id,
         f.item_name,
-        f.user_id AS reporter_id,
 
-        /* FOUND RESPONSE INFORMATION */
+        /*
+         * Reporter:
+         * For claims -> f.user_id
+         * For found responses -> l.user_id
+         */
+        COALESCE(
+            f.user_id,
+            l.user_id
+        ) AS reporter_id,
+
+        /* ===========================
+           FOUND RESPONSE INFORMATION
+        =========================== */
 
         fr.finder_id AS found_finder_id,
         fr.status AS found_response_status,
@@ -46,7 +58,9 @@ $sql = "
 
     FROM notifications n
 
-    /* CLAIM SYSTEM */
+    /* ===========================
+       CLAIM SYSTEM
+    =========================== */
 
     LEFT JOIN claims c
         ON n.claim_id = c.id
@@ -54,10 +68,19 @@ $sql = "
     LEFT JOIN found_items f
         ON c.item_id = f.id
 
-    /* I FOUND THIS ITEM SYSTEM */
+    /* ===========================
+       FOUND RESPONSE SYSTEM
+    =========================== */
 
     LEFT JOIN found_responses fr
         ON n.found_response_id = fr.id
+
+    /* ===========================
+       LOST ITEM FOR FOUND RESPONSE
+    =========================== */
+
+    LEFT JOIN lost_items l
+        ON fr.lost_item_id = l.id
 
     WHERE n.user_id = ?
 
@@ -100,9 +123,7 @@ mysqli_stmt_close($stmt);
 
 $sql = "
     UPDATE notifications
-
     SET is_read = 1
-
     WHERE user_id = ?
 ";
 
@@ -439,11 +460,19 @@ body {
         $claim_id =
             (int)$notification['claim_id'];
 
+        /*
+         * Do NOT directly cast NULL to 0
+         * before checking it.
+         */
         $reporter_id =
-            (int)$notification['reporter_id'];
+            $notification['reporter_id'] !== null
+                ? (int)$notification['reporter_id']
+                : 0;
 
         $claimant_id =
-            (int)$notification['claimant_id'];
+            $notification['claimant_id'] !== null
+                ? (int)$notification['claimant_id']
+                : 0;
 
 
         /* ===========================
@@ -451,10 +480,14 @@ body {
         =========================== */
 
         $found_response_id =
-            (int)$notification['found_response_id'];
+            $notification['found_response_id'] !== null
+                ? (int)$notification['found_response_id']
+                : 0;
 
         $found_finder_id =
-            (int)$notification['found_finder_id'];
+            $notification['found_finder_id'] !== null
+                ? (int)$notification['found_finder_id']
+                : 0;
 
         $found_response_status =
             $notification['found_response_status'];
@@ -465,18 +498,33 @@ body {
         =========================== */
 
         $is_claim_notification =
-            !empty($notification['claim_id']);
+            !empty(
+                $notification['claim_id']
+            );
 
 
         $is_found_response_notification =
-    !empty(
-        $notification['found_response_id']
-    );
+            !empty(
+                $notification['found_response_id']
+            );
 
-$is_found_response_for_reporter =
-    $is_found_response_notification &&
-    $notification['reporter_id'] !== null &&
-    (int)$notification['reporter_id'] === $user_id;
+
+        /*
+         * FOUND RESPONSE NOTIFICATION
+         *
+         * Reporter can view it.
+         *
+         * Finder can also view it.
+         */
+
+        $is_found_response_for_user =
+            $is_found_response_notification
+            &&
+            (
+                $reporter_id === $user_id
+                ||
+                $found_finder_id === $user_id
+            );
 
 
         /* ===========================
@@ -603,17 +651,18 @@ $is_found_response_for_reporter =
         =========================== */
 
         } elseif (
-    $is_found_response_for_reporter
-) {
+            $is_found_response_notification
+        ) {
 
-    $icon_class =
-        'icon-found';
+            $icon_class =
+                'icon-found';
 
-    $icon =
-        'fa-hand-holding-heart';
+            $icon =
+                'fa-hand-holding-heart';
 
-    $title =
-        'Someone Found Your Item';
+            $title =
+                'Found Item Response';
+
 
         /* ===========================
            CLAIM NOTIFICATION
@@ -653,7 +702,9 @@ $is_found_response_for_reporter =
             align-items-start">
 
 
-                <!-- ICON -->
+                <!-- ===========================
+                     ICON
+                =========================== -->
 
                 <div
                 class="notification-icon
@@ -667,7 +718,9 @@ $is_found_response_for_reporter =
                 </div>
 
 
-                <!-- CONTENT -->
+                <!-- ===========================
+                     CONTENT
+                =========================== -->
 
                 <div class="flex-grow-1">
 
@@ -677,7 +730,9 @@ $is_found_response_for_reporter =
                     <div class="notification-title">
 
                         <?= htmlspecialchars(
-                            $title
+                            $title,
+                            ENT_QUOTES,
+                            'UTF-8'
                         ) ?>
 
                     </div>
@@ -688,7 +743,9 @@ $is_found_response_for_reporter =
                     <div class="notification-text">
 
                         <?= htmlspecialchars(
-                            $message
+                            $message,
+                            ENT_QUOTES,
+                            'UTF-8'
                         ) ?>
 
                     </div>
@@ -704,7 +761,9 @@ $is_found_response_for_reporter =
                         </i>
 
                         <?= htmlspecialchars(
-                            $notification['created_at']
+                            $notification['created_at'],
+                            ENT_QUOTES,
+                            'UTF-8'
                         ) ?>
 
                     </div>
@@ -715,17 +774,19 @@ $is_found_response_for_reporter =
                     ============================ -->
 
                     <?php if (
-                        $is_claim_notification &&
+                        $is_claim_notification
+                        &&
                         (
-                            $reporter_id === $user_id ||
+                            $reporter_id === $user_id
+                            ||
                             $claimant_id === $user_id
                         )
                     ): ?>
 
-
                         <a
                             href="claim_details.php?id=<?= $claim_id ?>"
-                            class="btn btn-primary notification-btn mt-3">
+                            class="btn btn-primary notification-btn mt-3"
+                        >
 
                             <i
                                 class="fa-solid
@@ -737,7 +798,6 @@ $is_found_response_for_reporter =
 
                         </a>
 
-
                     <?php endif; ?>
 
 
@@ -746,23 +806,27 @@ $is_found_response_for_reporter =
                     ============================ -->
 
                     <?php if (
-    $is_found_response_for_reporter &&
-    $found_response_id > 0
-): ?>
+                        $is_found_response_for_user
+                        &&
+                        $found_response_id > 0
+                    ): ?>
 
-    <a
-        href="found_response_details.php?id=<?= $found_response_id ?>"
-        class="btn btn-success notification-btn mt-3">
+                        <a
+                            href="found_response_details.php?id=<?= $found_response_id ?>"
+                            class="btn btn-success notification-btn mt-3"
+                        >
 
-        <i
-            class="fa-solid fa-eye me-1">
-        </i>
+                            <i
+                                class="fa-solid
+                                fa-eye
+                                me-1">
+                            </i>
 
-        View Found Response
+                            View Found Response
 
-    </a>
+                        </a>
 
-<?php endif; ?>
+                    <?php endif; ?>
 
 
                 </div>
@@ -798,7 +862,7 @@ $is_found_response_for_reporter =
 
 
     <!-- ===========================
-         EMPTY
+         EMPTY NOTIFICATIONS
     ============================ -->
 
     <div class="empty-notifications">
@@ -836,4 +900,3 @@ $is_found_response_for_reporter =
 </body>
 
 </html>
-

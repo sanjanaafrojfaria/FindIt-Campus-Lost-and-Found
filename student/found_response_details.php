@@ -1,4 +1,3 @@
-
 <?php
 
 session_start();
@@ -65,6 +64,7 @@ $sql = "
         l.lost_date,
         l.user_id AS reporter_id,
         l.university_ref_id,
+        l.status AS lost_item_status,
 
         /* FINDER */
 
@@ -151,15 +151,18 @@ if (!$response) {
 =========================== */
 
 /*
- * Only the person who reported the
- * lost item can review the finder response.
+ * Both the reporter and finder can view
+ * the found response details.
  */
 
-if (
-    (int)$response['reporter_id']
-    !==
-    $user_id
-) {
+$is_reporter =
+    (int)$response['reporter_id'] === $user_id;
+
+$is_finder =
+    (int)$response['finder_id'] === $user_id;
+
+
+if (!$is_reporter && !$is_finder) {
 
     header("Location: notifications.php");
     exit();
@@ -197,6 +200,21 @@ if ($response['status'] === "Accepted") {
     $status_class = "bg-danger";
 
 }
+
+
+/* ===========================
+   LOST ITEM STATUS
+=========================== */
+
+$lost_item_status =
+    strtolower(
+        trim(
+            $response['lost_item_status'] ?? ''
+        )
+    );
+
+$is_item_found =
+    ($lost_item_status === "found");
 
 ?>
 
@@ -382,6 +400,8 @@ body {
 </h1>
 
 
+<?php if ($is_reporter): ?>
+
 <p class="text-muted">
 
     Someone reported finding your lost item.
@@ -390,16 +410,28 @@ body {
 
 </p>
 
+<?php else: ?>
+
+<p class="text-muted">
+
+    You reported finding this lost item.
+
+    View the response and current status below.
+
+</p>
+
+<?php endif; ?>
+
 
 <!-- ===========================
-     STATUS
+     RESPONSE STATUS
 =========================== -->
 
 <div class="mb-4">
 
 <span class="badge <?= $status_class ?> p-2">
 
-    Status:
+    Response Status:
 
     <?= htmlspecialchars(
         $response['status'],
@@ -408,6 +440,19 @@ body {
     ) ?>
 
 </span>
+
+
+<?php if ($is_item_found): ?>
+
+    <span class="badge bg-success p-2 ms-2">
+
+        <i class="fa-solid fa-check-circle me-1"></i>
+
+        Item Found
+
+    </span>
+
+<?php endif; ?>
 
 </div>
 
@@ -478,6 +523,25 @@ body {
 
         <?= htmlspecialchars(
             $response['lost_date'],
+            ENT_QUOTES,
+            'UTF-8'
+        ) ?>
+
+    </span>
+
+</div>
+
+
+<div class="info-row">
+
+    <i class="fa-solid fa-user"></i>
+
+    <strong>Reporter:</strong>
+
+    <span>
+
+        <?= htmlspecialchars(
+            $response['reporter_name'],
             ENT_QUOTES,
             'UTF-8'
         ) ?>
@@ -630,7 +694,6 @@ body {
     )
 ) ?>
 
-
 </p>
 
 
@@ -712,61 +775,254 @@ onerror="this.style.display='none';"
 
 
 <!-- ===========================
-     ACTIONS
+     REPORTER ACTIONS
 =========================== -->
 
-<?php if ($response['status'] === 'Pending'): ?>
+<?php if ($is_reporter): ?>
 
+
+    <?php if ($response['status'] === 'Pending'): ?>
+
+
+        <div class="mt-4">
+
+
+            <form
+            action="found_response_action.php"
+            method="POST"
+            class="d-flex gap-2 flex-wrap"
+            >
+
+
+                <input
+                type="hidden"
+                name="response_id"
+                value="<?= $response_id ?>"
+                >
+
+
+                <button
+                type="submit"
+                name="action"
+                value="accept"
+                class="btn btn-success action-btn"
+                onclick="return confirm('Accept this found response?');"
+                >
+
+                    <i class="fa-solid fa-circle-check me-1"></i>
+
+                    Accept Response
+
+                </button>
+
+
+                <button
+                type="submit"
+                name="action"
+                value="reject"
+                class="btn btn-danger action-btn"
+                onclick="return confirm('Reject this found response?');"
+                >
+
+                    <i class="fa-solid fa-circle-xmark me-1"></i>
+
+                    Reject Response
+
+                </button>
+
+
+                <a
+                href="notifications.php"
+                class="btn btn-outline-primary action-btn"
+                >
+
+                    <i class="fa-solid fa-arrow-left me-1"></i>
+
+                    Back
+
+                </a>
+
+
+            </form>
+
+
+        </div>
+
+
+    <?php elseif ($response['status'] === 'Accepted'): ?>
+
+
+        <div class="mt-4">
+
+
+            <div class="alert alert-success">
+
+                <i class="fa-solid fa-circle-check me-2"></i>
+
+                <strong>Response Accepted</strong>
+
+                <br>
+
+                The finder has reported that they found your item.
+
+            </div>
+
+
+            <?php if ($is_item_found): ?>
+
+
+                <!-- ITEM ALREADY FOUND -->
+
+                <div class="alert alert-success">
+
+                    <i class="fa-solid fa-check-circle me-2"></i>
+
+                    Your lost item has already been marked as
+                    <strong>Found</strong>.
+
+                    <br>
+
+                    The item cannot be marked as found again.
+
+                </div>
+
+
+            <?php else: ?>
+
+
+                <!-- MARK AS FOUND -->
+
+                <form
+                action="found_response_action.php"
+                method="POST"
+                class="mb-3"
+                onsubmit="return confirm(
+                    'Are you sure you found your item? This will mark the lost item as Found.'
+                );"
+                >
+
+
+                    <input
+                    type="hidden"
+                    name="response_id"
+                    value="<?= $response_id ?>"
+                    >
+
+
+                    <input
+                    type="hidden"
+                    name="action"
+                    value="mark_found"
+                    >
+
+
+                    <button
+                    type="submit"
+                    class="btn btn-success action-btn"
+                    >
+
+                        <i class="fa-solid fa-check-circle me-1"></i>
+
+                        I Found My Item
+
+                    </button>
+
+
+                </form>
+
+
+            <?php endif; ?>
+
+
+        </div>
+
+
+    <?php elseif ($response['status'] === 'Rejected'): ?>
+
+
+        <div class="alert alert-danger mt-4">
+
+            <i class="fa-solid fa-circle-xmark me-2"></i>
+
+            <strong>Response Rejected</strong>
+
+            <br>
+
+            You rejected this found response.
+
+        </div>
+
+
+    <?php endif; ?>
+
+
+<?php endif; ?>
+
+
+<!-- ===========================
+     FINDER STATUS MESSAGE
+=========================== -->
+
+<?php if ($is_finder): ?>
+
+
+    <?php if ($response['status'] === 'Pending'): ?>
+
+        <div class="alert alert-warning mt-4">
+
+            <i class="fa-solid fa-clock me-2"></i>
+
+            Your found response is waiting for the reporter's review.
+
+        </div>
+
+
+    <?php elseif ($response['status'] === 'Accepted'): ?>
+
+        <div class="alert alert-success mt-4">
+
+            <i class="fa-solid fa-circle-check me-2"></i>
+
+            The reporter accepted your found response.
+
+        </div>
+
+
+        <?php if ($is_item_found): ?>
+
+            <div class="alert alert-success">
+
+                <i class="fa-solid fa-handshake me-2"></i>
+
+                The lost item has been marked as
+                <strong>Found</strong>.
+
+            </div>
+
+        <?php endif; ?>
+
+
+    <?php elseif ($response['status'] === 'Rejected'): ?>
+
+        <div class="alert alert-danger mt-4">
+
+            <i class="fa-solid fa-circle-xmark me-2"></i>
+
+            The reporter rejected your found response.
+
+        </div>
+
+    <?php endif; ?>
+
+
+<?php endif; ?>
+
+
+<!-- ===========================
+     BACK BUTTON
+=========================== -->
 
 <div class="mt-4">
-
-
-<form
-action="found_response_action.php"
-method="POST"
-class="d-flex gap-2 flex-wrap"
->
-
-
-<input
-type="hidden"
-name="response_id"
-value="<?= $response_id ?>"
->
-
-
-<button
-type="submit"
-name="action"
-value="accept"
-class="btn btn-success action-btn"
-onclick="return confirm('Accept this found response?');"
->
-
-
-<i class="fa-solid fa-circle-check me-1"></i>
-
-Accept Response
-
-
-</button>
-
-
-<button
-type="submit"
-name="action"
-value="reject"
-class="btn btn-danger action-btn"
-onclick="return confirm('Reject this found response?');"
->
-
-
-<i class="fa-solid fa-circle-xmark me-1"></i>
-
-Reject Response
-
-
-</button>
 
 
 <a
@@ -774,117 +1030,9 @@ href="notifications.php"
 class="btn btn-outline-primary action-btn"
 >
 
+    <i class="fa-solid fa-arrow-left me-1"></i>
 
-<i class="fa-solid fa-arrow-left me-1"></i>
-
-Back
-
-
-</a>
-
-
-</form>
-
-
-</div>
-
-<?php else: ?>
-
-<div class="mt-4">
-
-    <?php if ($response['status'] === 'Accepted'): ?>
-
-        <div class="alert alert-success">
-
-            <i class="fa-solid fa-circle-check me-2"></i>
-
-            <strong>Response Accepted</strong>
-
-            <br>
-
-            The finder has reported that they found your item.
-
-        </div>
-
-
-        <?php if (
-            isset($_GET['found']) &&
-            $_GET['found'] == '1'
-        ): ?>
-
-            <div class="alert alert-success">
-
-                <i class="fa-solid fa-check-circle me-2"></i>
-
-                Your lost item has been marked as
-                <strong>Found</strong>.
-
-            </div>
-
-        <?php elseif (
-            $response['status'] === 'Accepted'
-        ): ?>
-
-            <form
-                action="found_response_action.php"
-                method="POST"
-                class="mb-3"
-                onsubmit="return confirm(
-                    'Are you sure you found your item? This will mark the lost item as Found.'
-                );"
-            >
-
-                <input
-                    type="hidden"
-                    name="response_id"
-                    value="<?= $response_id ?>"
-                >
-
-                <input
-                    type="hidden"
-                    name="action"
-                    value="mark_found"
-                >
-
-                <button
-                    type="submit"
-                    class="btn btn-success action-btn"
-                >
-
-                    <i class="fa-solid fa-check-circle me-1"></i>
-
-                    I Found My Item
-
-                </button>
-
-            </form>
-
-        <?php endif; ?>
-
-    <?php endif; ?>
-
-
-    <a
-        href="notifications.php"
-        class="btn btn-outline-primary action-btn"
-    >
-
-        <i class="fa-solid fa-arrow-left me-1"></i>
-
-        Back to Notifications
-
-    </a>
-
-</div>
-
-<?php endif; ?>
-
-
-
-<i class="fa-solid fa-arrow-left me-1"></i>
-
-Back to Notifications
-
+    Back to Notifications
 
 </a>
 
@@ -892,14 +1040,9 @@ Back to Notifications
 </div>
 
 
-<?php endif; ?>
-
-
 </div>
 
-
 </div>
-
 
 </section>
 
@@ -907,4 +1050,3 @@ Back to Notifications
 </body>
 
 </html>
-
