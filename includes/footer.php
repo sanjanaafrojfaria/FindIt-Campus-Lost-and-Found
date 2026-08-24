@@ -1,18 +1,43 @@
-<footer class="footer-section py-4">
+<footer class="footer-section">
 
     <div class="container text-center">
 
-        <h4 class="fw-bold">
-            🔍 FindIt
-        </h4>
+        <div class="footer-logo">
 
-        <p>
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <span>Find<span>It</span></span>
+
+        </div>
+
+        <p class="footer-tagline">
             Campus Lost & Found Platform
         </p>
 
-        <small>
+        <div class="footer-contact">
+
+            <a href="mailto:admin@gmail.com">
+                <i class="fa-solid fa-envelope"></i>
+                admin@gmail.com
+            </a>
+
+            <a href="tel:01732278875">
+                <i class="fa-solid fa-phone"></i>
+                01732278875
+            </a>
+
+            <span>
+                <i class="fa-solid fa-location-dot"></i>
+                Dhaka-1230
+            </span>
+
+        </div>
+
+        <div class="footer-line"></div>
+
+        <p class="footer-copyright">
             © 2026 FindIt. All Rights Reserved.
-        </small>
+        </p>
 
     </div>
 
