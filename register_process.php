@@ -271,6 +271,16 @@ if (mysqli_stmt_num_rows($stmt) > 0) {
 }
 
 mysqli_stmt_close($stmt);
+/* ===========================
+   VALIDATE PHONE NUMBER
+=========================== */
+
+if (!preg_match('/^[0-9]{11}$/', $phone)) {
+
+    header("Location: message.php?action=invalid_phone");
+    exit();
+
+}
 
 
 /* ===========================

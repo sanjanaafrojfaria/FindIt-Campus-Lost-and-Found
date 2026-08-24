@@ -72,7 +72,7 @@ if (session_status() === PHP_SESSION_NONE) {
                         class="nav-link"
                         href="users.php">
 
-                        Users
+                        Pending Users
 
                     </a>
 
@@ -85,9 +85,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
                     <a
                         class="nav-link"
-                        href="#">
+                        href="approved_users.php">
 
-                        Manage Claims
+                        Approved Users
 
                     </a>
 

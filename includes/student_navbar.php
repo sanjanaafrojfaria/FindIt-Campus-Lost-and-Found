@@ -277,7 +277,7 @@ if ($navbar_user_id > 0) {
 
                     <a
                         class="nav-link"
-                        href="profile.php">
+                        href="my_profile.php">
 
                         <i class="fa-solid fa-user"></i>
 
